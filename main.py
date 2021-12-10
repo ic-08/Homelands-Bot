@@ -12,6 +12,7 @@ import pytz
 import discord
 import random
 
+
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
 bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online,help_command=None)
