@@ -345,6 +345,24 @@ async def poll(ctx, *args):
     await message.add_reaction("👎")
     await ctx.message.delete()
 
+#poll() is for creating a  poll. Ex: $poll <arg>
+@bot.command()
+async def uniquepoll(ctx, *args):
+    if ctx.channel.id == 849714684856238100:
+        message = ''
+        num = -1
+        for item in args:
+            num +=1
+            if len(args) -2 == num:
+                break
+            else:
+                message += str(args[num]) + " "
+    message = await ctx.send(f"**{ctx.author}** asks : {message}")
+    await message.add_reaction(str(len(args)))
+    await message.add_reaction(str(int(len(args)) -1))
+    await ctx.message.delete()
+
+
 #vote() is for creating a anonymous voting. Ex: $vote <arg>
 @bot.command()
 async def vote(ctx, *args):
