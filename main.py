@@ -448,6 +448,7 @@ async def on_ready():
     #Startup
     global file
     from scheduler import scheduler
+    channel = bot.get_channel(919281999427043369)
     #Check if pinging is up
     try:
         start = tme.time()
@@ -456,8 +457,13 @@ async def on_ready():
         error = "No"
     except:
         error = "An"
+        await channel.send('Error in pinging bot. Priority is low.')
 
-    file = scheduler()
+    try:
+        file = scheduler()
+    except:
+        await channel.send('<&@918658730516697148, Error in PIL Library or the scheduler file. Priority is high during school periods')
+
     clock = datetime.now(pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
     embed = discord.Embed(
         title='Homelands Bot is Online',
@@ -466,7 +472,6 @@ async def on_ready():
     embed.add_field(name="Information",value=f"Day = {db['day']}\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'. Response time : {infoping}\n\nPIL Library and time generator check...\n")
     embed.set_footer(text="Written with python")
     embed.set_image(url="attachment://temp.png")
-    channel = bot.get_channel(919281999427043369)
     await channel.send(file=file, embed=embed)
     print('Logged on')
 
