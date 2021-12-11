@@ -4,6 +4,8 @@ import pytz
 from flask import Flask
 from threading import Thread
 import time
+from replit import db
+import json
 
 #Flask
 app = Flask('')

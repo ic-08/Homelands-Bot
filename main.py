@@ -11,6 +11,7 @@ from datetime import *
 import pytz
 import discord
 import random
+from replit import db
 
 
 #Start up@
@@ -348,6 +349,7 @@ async def poll(ctx, *args):
 #poll() is for creating a  poll. Ex: $poll <arg>
 @bot.command()
 async def uniquepoll(ctx, *args):
+    print(args)
     if ctx.channel.id == 849714684856238100:
         message = ''
         num = -1
@@ -357,10 +359,15 @@ async def uniquepoll(ctx, *args):
                 break
             else:
                 message += str(args[num]) + " "
-    message = await ctx.send(f"**{ctx.author}** asks : {message}")
-    await message.add_reaction(str(len(args)))
-    await message.add_reaction(str(int(len(args)) -1))
-    await ctx.message.delete()
+    try:
+        message = await ctx.send(f"**{ctx.author}** asks : {message}")
+        await message.add_reaction(str(args[len(args)-1]))
+        await message.add_reaction(str(args[int(len(args)) -2]))
+        await ctx.message.delete()
+    except:
+        await ctx.message.delete()
+        await message.message.delete()
+        await ctx.send("Not a valid format. Format is `$uniquepoll {prompt} {emoji1} {emoji2}`")
 
 
 #vote() is for creating a anonymous voting. Ex: $vote <arg>
