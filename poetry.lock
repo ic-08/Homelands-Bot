@@ -120,6 +120,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "day"
+version = "0.0.1"
+description = "what's day is today"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "discord"
 version = "1.7.3"
 description = "A mirror package for discord.py. Please install that instead."
@@ -577,7 +585,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "b59d18f354ba062e7ed8b70c1873da6607867e72b828e63e37118d3b48d89f26"
+content-hash = "1b86be8dfbd5efd7dce1f5a504e6ce84b74df33c8477593db0eebe80a030210b"
 
 [metadata.files]
 aiohttp = [
@@ -657,6 +665,9 @@ click = [
 colorama = [
     {file = "colorama-0.4.4-py2.py3-none-any.whl", hash = "sha256:9f47eda37229f68eee03b24b9748937c7dc3868f906e8ba69fbcbdd3bc5dc3e2"},
     {file = "colorama-0.4.4.tar.gz", hash = "sha256:5941b2b48a20143d2267e95b1c2a7603ce057ee39fd88e7329b0c292aa16869b"},
+]
+day = [
+    {file = "day-0.0.1.tar.gz", hash = "sha256:2ec578b60313032e067dc4af1b1a656db4cb1b80d25a53eba22a54c1a0ea4a92"},
 ]
 discord = [
     {file = "discord-1.7.3-py3-none-any.whl", hash = "sha256:248d728356e149c818a81b94659047a19305ea1623d4810bbb342f6b7df55f36"},

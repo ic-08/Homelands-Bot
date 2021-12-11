@@ -12,7 +12,10 @@ import pytz
 import discord
 import random
 from replit import db
-
+import requests
+import time
+tme = time
+print(db.keys())
 
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
@@ -427,9 +430,6 @@ async def setday(ctx, *args):
 async def test(ctx):
     from bot_func import cng_due
     from googleapi import main,main2
-    
-    #await ctx.send(main())
-    #await ctx.send(main2())
     embd = cng_due(main2(),main())
     await ctx.send(embed=embd)
 
@@ -445,17 +445,30 @@ async def on_ready():
     bot.remove_command("help")
     #bot.add_command(bot_help)
 
-    #Bot is online
-    time = datetime.now(pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
+    #Startup
+    global file
+    from scheduler import scheduler
+    #Check if pinging is up
+    try:
+        start = tme.time()
+        r = requests.head('https://Pinging-bot.isaacchu1.repl.co',timeout=10)
+        infoping = f"{(tme.time() - start)*1000} ms"
+        error = "No"
+    except:
+        error = "An"
+
+    file = scheduler()
+    clock = datetime.now(pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
     embed = discord.Embed(
         title='Homelands Bot is Online',
-        description=f"Logged on as <@!822488670153474098> as of {time}",
+        description=f"Logged on as {bot.user} as of {clock}",
         color=discord.Color.green())
+    embed.add_field(name="Information",value=f"Day = {db['day']}\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'. Response time : {infoping}\n\nPIL Library and time generator check...\n")
     embed.set_footer(text="Written with python")
-    channel = bot.get_channel(842823949037076520)
-    await channel.send(embed=embed)
+    embed.set_image(url="attachment://temp.png")
+    channel = bot.get_channel(919281999427043369)
+    await channel.send(file=file, embed=embed)
     print('Logged on')
-
 
     #For changing due dates
     from bot_func import cng_due
@@ -465,10 +478,13 @@ async def on_ready():
     message = await channel.fetch_message(914295454840258601)
     await message.edit(embed=dueembd)
 
+
+
+
+
     #For scheduling periods
-    from day import day
+    day = int(db['day'])
     
-    global file
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10','13:50'] 
     holidays = ['10:11',"11:12"]
 
@@ -496,6 +512,7 @@ async def on_ready():
 
         #Find current time
         now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
+
         try:
             os.remove(r'assets/temp/temp.png')
         except:
@@ -589,7 +606,7 @@ async def on_ready():
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
 
-                #Next day schedule
+                #Next day time picture
                 file = scheduler()
 
                 #Prompt in the scheduling.

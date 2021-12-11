@@ -4,6 +4,7 @@ cmd_dict = {
 import datetime
 from datetime import datetime
 import pytz
+from replit import db
 
 
 
@@ -12,24 +13,18 @@ def search(cmd):
         return cmd_dict
 
 def changeday(day):
-
-    file1 = open("day.py", "w")
     if day == 5:
         day = 1
-        x = "day = " + str(day)
+        db["day"] = int(day)
     else:
         day += 1
-        x = "day = " + str(day)
-    file1.write(x)
-    file1.close()
-    
+        db["day"] = int(day)
+
     return day
 
 def setday(day):
-    file1 = open("day.py", "w")
     x = "day = " + str(day)
-    file1.write(x)
-    file1.close()
+    db["day"] = int(day)
     return day
 
 def cng_due(due705,due805):
