@@ -7,6 +7,10 @@ from google.oauth2.credentials import Credentials
 import datetime
 from datetime import *
 import pytz
+from replit import db
+import time
+tme = time
+
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/classroom.student-submissions.me.readonly', 'https://www.googleapis.com/auth/classroom.courses.readonly']
@@ -20,6 +24,9 @@ convmonths = ["Janurary","Feburary","March","April","May","June","July","August"
 
 
 def main():
+    tokenfile = open("duedate/token.json", "w")
+    tokenfile.write(db['token1'])
+    tokenfile.close()
     global convmonhts
     classes805 = [
         'Homelands Spirit Hawks',
@@ -105,6 +112,13 @@ def main():
                     
             except KeyError:
                 pass 
+        
+        file = open('duedate/token.json', 'r')
+        db["token1"] = file.read()
+        file.close()
+
+        tokenfile = open("duedate/token.json", "w")
+        tokenfile.close()
         return due      
         
 
@@ -114,6 +128,9 @@ def main():
 
 
 def main2():
+    dantokenfile = open("duedate/danieltoken.json", "w")
+    dantokenfile.write(db['token2'])
+    dantokenfile.close()
 
     classes705 = [
         '705 Music',
@@ -198,6 +215,13 @@ def main2():
                     
             except KeyError:
                 pass 
+
+        danfile = open('duedate/danieltoken.json', 'r')
+        db["token2"] = danfile.read()
+        danfile.close()
+
+        dantokenfile = open("duedate/danieltoken.json", "w")
+        dantokenfile.close()
         return due      
         
 

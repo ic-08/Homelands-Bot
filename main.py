@@ -14,13 +14,14 @@ import random
 from replit import db
 import requests
 import time
-tme = time
-print(db.keys())
+
 
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
 bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online,help_command=None)
 bot.strip_after_prefix = True
+tme = time
+print(f"Repl Database keys in use : {db.keys()}")
 #bot.remove_command('help')
 startup()
 
@@ -701,3 +702,17 @@ async def on_ready():
                 await asyncio.sleep(60)
 
 bot.run(os.environ['discordtoken'])
+
+
+
+
+#Commentary and Information
+
+#Use this to set up a new token
+#file = open('duedate/danieltoken.json', 'r')
+#db["token2"] = file.read()
+#file.close()
+#file = open('duedate/danieltoken.json', 'w')
+#file.close()
+
+

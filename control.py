@@ -19,11 +19,6 @@ from bot_func import search
 from discord.utils import get
 
 
-
-from test import main, main2
-#main()
-#main2()
-
 #Start up@
 bot = commands.Bot(command_prefix='$')
 activity = discord.Game(name="$help | $cmd for commands")
