@@ -697,6 +697,7 @@ async def on_ready():
                         message = await channel.fetch_message(
                             914295454840258601)
                         await message.edit(embed=embed)
+                        print("Updated due dates")
                         break
                     except:
                         pass
@@ -720,7 +721,6 @@ async def on_ready():
             #Refresh duedates
             if int(datetime.now(
                     pytz.timezone('US/Eastern')).strftime("%M")) % 3 == 0:
-                print("Updated duedates")
                 #Try and except for tempoarily service errors for Google API
                 while True:
                     try:
@@ -730,6 +730,7 @@ async def on_ready():
                         message = await channel.fetch_message(
                             914295454840258601)
                         await message.edit(embed=embed)
+                        print("Updated due dates")
                         break
                     except:
                         pass
