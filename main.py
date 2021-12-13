@@ -1,6 +1,6 @@
 #FOR ANY ANNOUNCERS, PLEASE ONLY EDIT DUEDATE.PY
 #THANK YOU FOR YOUR COOPERATION AND UNDERSTANDING
- 
+
 from discord.ext import commands
 import asyncio
 import os
@@ -15,15 +15,15 @@ from replit import db
 import requests
 import time
 
-
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
-bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online,help_command=None)
+bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online, help_command=None)
 bot.strip_after_prefix = True
 tme = time
 print(f"Repl Database keys in use : {db.keys()}")
 #bot.remove_command('help')
 startup()
+
 
 ## BELOW USED FOR BOT ##
 def separate_str(string):
@@ -47,6 +47,7 @@ Notice: Before each command, there SHOULD be a comment detailing the command and
 For example:
 #test() is for testing. Ex: $test, $ttt
 '''
+
 
 #_8ball is for 'determining the future' (not really). Ex: $_8ball <prompt>, $8ball <prompt>, $8b <prompt>
 @bot.command(aliases=['8ball', '8b'])
@@ -85,12 +86,13 @@ async def cmd(ctx, *args):
             cmds += f"`{pair[0]}`, "
 
         #Create an embed with all the Commands
-        embd = discord.Embed(title="COMMANDS", description = str(cmds))
-        await ctx.send(embed=embd)    
+        embd = discord.Embed(title="COMMANDS", description=str(cmds))
+        await ctx.send(embed=embd)
+
 
 #avatar is to show your's, or someone else's avatar. Ex: $avatar, $avatar @mention, $avatar {id}
 @bot.command(aliases=['av'])
-async def avatar(ctx, *,  avamember : discord.Member=None):
+async def avatar(ctx, *, avamember: discord.Member = None):
     if avamember == None:
         avamember = await bot.fetch_user(ctx.author.id)
     elif avamember is int:
@@ -100,8 +102,10 @@ async def avatar(ctx, *,  avamember : discord.Member=None):
     embd.set_image(url=userAvatarUrl)
     await ctx.send(embed=embd)
 
+
 #https://www.i2symbol.com/symbols/corner link to unicode characters for stuff like this: └
 #see Dank Memer pls help to see more
+
 
 #credits is to show credits. Ex: $credits
 @bot.command(aliases=['credit', 'contributors', 'developers', 'dev', 'devs'])
@@ -120,9 +124,8 @@ async def credits(ctx):
     await ctx.send(embed=embd)
 
 
-
 #help() is for asking for help. Ex: $help
-@bot.command(aliases=['Help','bothelp'])
+@bot.command(aliases=['Help', 'bothelp'])
 async def help(ctx):
     embd = discord.Embed(
         title='Homelands Bot Help',
@@ -172,6 +175,19 @@ async def report(ctx, *args):
         txt += ' '
     await channel.send(f" <@!{ctx.author.id}> reports {txt}")
     await ctx.send(f'<@!{ctx.author.id}>, your request has been received.')
+
+
+#calc() is for calculator
+@bot.command()
+async def calc(ctx, *args):
+    equation = ''
+    for item in args:
+        equation += str(item)
+
+    try:
+        await ctx.send(eval(equation))
+    except:
+        pass
 
 
 #server() is for server details. Ex: $server
@@ -300,8 +316,11 @@ async def server(ctx, *args):
             color=0x808080)
         embed.set_author(
             name="Homelands Bot",
-            url=r'https://thumbs.dreamstime.com/z/colorful-vector-hand-lettering-banner-spelling-upcoming-events-upcoming-events-hand-drawn-letters-banner-119481161.jpg',
-            icon_url=r'https://www.springwaternews.ca/wp-content/uploads/2020/12/upcoming-events.jpg')
+            url=
+            r'https://thumbs.dreamstime.com/z/colorful-vector-hand-lettering-banner-spelling-upcoming-events-upcoming-events-hand-drawn-letters-banner-119481161.jpg',
+            icon_url=
+            r'https://www.springwaternews.ca/wp-content/uploads/2020/12/upcoming-events.jpg'
+        )
         embed.add_field(
             name='--',
             value=
@@ -335,7 +354,6 @@ async def rev(ctx, *args):
     await ctx.reply(rev_sentence, mention_author=False)
 
 
-
 #poll() is for creating a  poll. Ex: $poll <arg>
 @bot.command()
 async def poll(ctx, *args):
@@ -344,11 +362,12 @@ async def poll(ctx, *args):
         num = 0
         for item in args:
             message += str(args[num]) + " "
-            num +=1
+            num += 1
     message = await ctx.send(f"**{ctx.author}** asks : {message}")
     await message.add_reaction("👍")
     await message.add_reaction("👎")
     await ctx.message.delete()
+
 
 #poll() is for creating a  poll. Ex: $poll <arg>
 @bot.command()
@@ -358,20 +377,22 @@ async def uniquepoll(ctx, *args):
         message = ''
         num = -1
         for item in args:
-            num +=1
-            if len(args) -2 == num:
+            num += 1
+            if len(args) - 2 == num:
                 break
             else:
                 message += str(args[num]) + " "
     try:
         message = await ctx.send(f"**{ctx.author}** asks : {message}")
-        await message.add_reaction(str(args[len(args)-1]))
-        await message.add_reaction(str(args[int(len(args)) -2]))
+        await message.add_reaction(str(args[len(args) - 1]))
+        await message.add_reaction(str(args[int(len(args)) - 2]))
         await ctx.message.delete()
     except:
         await ctx.message.delete()
         await message.message.delete()
-        await ctx.send("Not a valid format. Format is `$uniquepoll {prompt} {emoji1} {emoji2}`")
+        await ctx.send(
+            "Not a valid format. Format is `$uniquepoll {prompt} {emoji1} {emoji2}`"
+        )
 
 
 #vote() is for creating a anonymous voting. Ex: $vote <arg>
@@ -386,17 +407,25 @@ async def vote(ctx, *args):
     embed.set_footer(text="Written with python")
     await ctx.send(embed=embed)
 
+
 #resmessage is for resolution message ( For muted members)
 @bot.command()
 async def resmessage(ctx):
     if ctx.channel.id == 839205612386648125 or ctx.channel.id == 842831313634983976:
         embed = discord.Embed(
-            title = "Welcome to res room",
-            description = "<@&907108327962574848> You are in prison because you did something wrong. If you can fix your mistake, fix it before you become a Temporarily Banned Member, kicked or permanently banned. If you cannot, you will suffer either confinement in this prison or receive your due punishment. If you see this message, please fix your mistake in any way you can.\n\n Guidelines :\n 1. What was your mistake\n 2. What will you do so that you won't commit this mistake again? \n 3. Why should you be unmuted?\n\n Answer truthfully. This channel is still moderated, so rules still apply. To resend this message, use command $resmessage")
-        await ctx.channel.send(embed=embed)  
+            title="Welcome to res room",
+            description=
+            "<@&907108327962574848> You are in prison because you did something wrong. If you can fix your mistake, fix it before you become a Temporarily Banned Member, kicked or permanently banned. If you cannot, you will suffer either confinement in this prison or receive your due punishment. If you see this message, please fix your mistake in any way you can.\n\n Guidelines :\n 1. What was your mistake\n 2. What will you do so that you won't commit this mistake again? \n 3. Why should you be unmuted?\n\n Answer truthfully. This channel is still moderated, so rules still apply. To resend this message, use command $resmessage"
+        )
+        await ctx.channel.send(embed=embed)
+
 
 #Anything below this is for moderation
-modlist_channels = [839141157774426142,846813361177755648,887097189443207228,842823949037076520,880096434421125190,909529988200554546]
+modlist_channels = [
+    839141157774426142, 846813361177755648, 887097189443207228,
+    842823949037076520, 880096434421125190, 909529988200554546
+]
+
 
 #post() is for posting. Ex: $post <arg>
 @bot.command()
@@ -405,12 +434,12 @@ async def post(ctx, *args):
     num = 0
     for item in args:
         message += str(args[num]) + " "
-        num +=1
+        num += 1
     message = await ctx.send(message)
     await ctx.message.delete()
-    
 
-@bot.command(aliases =["changeday"])
+
+@bot.command(aliases=["changeday"])
 async def setday(ctx, *args):
     if ctx.channel.id in modlist_channels:
         from bot_func import setday
@@ -427,15 +456,17 @@ async def setday(ctx, *args):
     else:
         await ctx.send("You can't do that")
 
+
 @bot.command()
 async def test(ctx):
     from bot_func import cng_due
-    from googleapi import main,main2
-    embd = cng_due(main2(),main())
+    from googleapi import main, main2
+    embd = cng_due(main2(), main())
     await ctx.send(embed=embd)
 
+
 @bot.command()
-async def addrole(ctx, member : discord.Member, role : discord.Role):
+async def addrole(ctx, member: discord.Member, role: discord.Role):
     if ctx.channel.id in modlist_channels:
         await member.add_roles(role)
 
@@ -453,7 +484,7 @@ async def on_ready():
     #Check if pinging is up
     try:
         start = tme.time()
-        r = requests.head('https://Pinging-bot.isaacchu1.repl.co',timeout=10)
+        r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
         error = "No"
     except:
@@ -463,14 +494,20 @@ async def on_ready():
     try:
         file = scheduler()
     except:
-        await channel.send('<&@918658730516697148, Error in PIL Library or the scheduler file. Priority is high during school periods')
+        await channel.send(
+            '<&@918658730516697148, Error in PIL Library or the scheduler file. Priority is high during school periods'
+        )
 
-    clock = datetime.now(pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
-    embed = discord.Embed(
-        title='Homelands Bot is Online',
-        description=f"Logged on as {bot.user} as of {clock}",
-        color=discord.Color.green())
-    embed.add_field(name="Information",value=f"Day = {db['day']}\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'. Response time : {infoping}\n\nPIL Library and time generator check...\n")
+    clock = datetime.now(
+        pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
+    embed = discord.Embed(title='Homelands Bot is Online',
+                          description=f"Logged on as {bot.user} as of {clock}",
+                          color=discord.Color.green())
+    embed.add_field(
+        name="Information",
+        value=
+        f"Day = {db['day']}\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
+    )
     embed.set_footer(text="Written with python")
     embed.set_image(url="attachment://temp.png")
     await channel.send(file=file, embed=embed)
@@ -478,21 +515,13 @@ async def on_ready():
 
     #For changing due dates
     from bot_func import cng_due
-    from googleapi import main,main2
-    dueembd = cng_due(main2(),main())
-    channel = bot.get_channel(887095059680477214)
-    message = await channel.fetch_message(914295454840258601)
-    await message.edit(embed=dueembd)
-
-
-
-
+    from googleapi import main, main2
 
     #For scheduling periods
     day = int(db['day'])
-    
-    periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10','13:50'] 
-    holidays = ['10:11',"11:12"]
+
+    periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
+    holidays = ['10:11', "11:12"]
 
     while True:
 
@@ -500,13 +529,14 @@ async def on_ready():
         message = await channel.fetch_message(914295454840258601)
 
         def refreshdue():
-            if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
+            if int(datetime.now(
+                    pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
                 print("Updated duedates")
                 #Try and except for tempoarily service errors for Google API
                 while True:
                     try:
                         #Refresh duedates
-                        dueembed = cng_due(main2(),main())
+                        dueembed = cng_due(main2(), main())
                         return dueembed
                     except:
                         pass
@@ -526,16 +556,18 @@ async def on_ready():
 
         #############################################################################################
 
-
         #Define variables
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
-        day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+        day_of_the_week = [
+            'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
+            'Sunday'
+        ]
         hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
         weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-        
-        
+
         #HOLIDAYS
-        if datetime.now(pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
+        if datetime.now(
+                pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
             print("Holiday.")
             try:
                 cnl = bot.get_channel(887095059680477214)
@@ -583,7 +615,7 @@ async def on_ready():
             elif now_time == '11:00':
                 file = scheduler()
                 embed = discord.Embed(title="Lunchtime",
-                                    description="Time for lunch! 😋")
+                                      description="Time for lunch! 😋")
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
                 file = discord.File("assets/temp/temp.png",
@@ -598,7 +630,7 @@ async def on_ready():
             elif now_time == '14:30':
                 file = scheduler()
                 embed = discord.Embed(title="End of school",
-                                    description="Have a nice day!")
+                                      description="Have a nice day!")
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
                 file = discord.File("assets/temp/temp.png",
@@ -608,7 +640,7 @@ async def on_ready():
                 #Change the day
                 from bot_func import changeday
                 nday = changeday(day)
-                
+
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
 
@@ -621,7 +653,7 @@ async def on_ready():
                 else:
                     day_prompt = "Tomorrow"
 
-                #Privious day schedule 
+                #Privious day schedule
                 embed = discord.Embed(
                     title=f"Good Afternoon!",
                     description=
@@ -636,7 +668,6 @@ async def on_ready():
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
                 await asyncio.sleep(3800)
-
 
             #School periods
             elif now_time in periods:
@@ -661,9 +692,10 @@ async def on_ready():
                 while True:
                     try:
                         #Refresh duedates
-                        embed = cng_due(main2(),main())
+                        embed = cng_due(main2(), main())
                         channel = bot.get_channel(887095059680477214)
-                        message = await channel.fetch_message(914295454840258601)
+                        message = await channel.fetch_message(
+                            914295454840258601)
                         await message.edit(embed=embed)
                         break
                     except:
@@ -674,25 +706,29 @@ async def on_ready():
             else:
                 cnl = bot.get_channel(887095059680477214)
                 message = await cnl.fetch_message(914295454840258601)
-                current_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
+                current_time = datetime.now(
+                    pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
                 print("Not a vaild period. Checking in approx 5 seconds")
                 print(f"Current time : {current_time}")
-                await asyncio.sleep(5)    
-
+                await asyncio.sleep(5)
 
         #NOT YOUR TYPICAL SCHOOL DAY
         else:
-            print("Not a school day. Today is a holiday, weekend, or a off of school time.")
+            print(
+                "Not a school day. Today is a holiday, weekend, or a off of school time."
+            )
             #Refresh duedates
-            if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
+            if int(datetime.now(
+                    pytz.timezone('US/Eastern')).strftime("%M")) % 3 == 0:
                 print("Updated duedates")
                 #Try and except for tempoarily service errors for Google API
                 while True:
                     try:
                         #Refresh duedates
-                        embed = cng_due(main2(),main())
+                        embed = cng_due(main2(), main())
                         channel = bot.get_channel(887095059680477214)
-                        message = await channel.fetch_message(914295454840258601)
+                        message = await channel.fetch_message(
+                            914295454840258601)
                         await message.edit(embed=embed)
                         break
                     except:
@@ -701,10 +737,8 @@ async def on_ready():
             else:
                 await asyncio.sleep(60)
 
+
 bot.run(os.environ['discordtoken'])
-
-
-
 
 #Commentary and Information
 
@@ -714,5 +748,3 @@ bot.run(os.environ['discordtoken'])
 #file.close()
 #file = open('duedate/danieltoken.json', 'w')
 #file.close()
-
-

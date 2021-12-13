@@ -23,21 +23,10 @@ def keepalive2():
         print(f"\n\n\n\nAlive as of {nowtime}")
         tme.sleep(60)
 
-def renew():
-    while True:
-        from googleapi import main, main2
-        main()
-        main2()
-        tme.sleep(1200)
-
 def startup():
     t = Thread(target=run)
     t.start()
 
     t1 = Thread(target=keepalive2)
     t1.start()
-
-    t2 = Thread(target=renew)
-    t2.start()
-
    
