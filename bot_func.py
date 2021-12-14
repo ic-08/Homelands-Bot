@@ -23,7 +23,6 @@ def changeday(day):
     return day
 
 def setday(day):
-    x = "day = " + str(day)
     db["day"] = int(day)
     return day
 

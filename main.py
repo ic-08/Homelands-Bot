@@ -7,7 +7,7 @@ import os
 from startup import startup
 from scheduler import scheduler
 import datetime
-from datetime import *
+from datetime import * 
 import pytz
 import discord
 import random
@@ -162,19 +162,8 @@ async def help(ctx):
     'howdy!', 'Hello', 'Hello!', 'Hi!', 'Hi'
 ])
 async def hi(ctx):
-    await ctx.reply('Hello!', mention_author=False)
-
-
-#report() is for reporting a user. Ex: $report {args}
-@bot.command(aliases=['rpt'])
-async def report(ctx, *args):
-    channel = bot.get_channel(846813361177755648)
-    txt = ''
-    for item in args:
-        txt += str(item)
-        txt += ' '
-    await channel.send(f" <@!{ctx.author.id}> reports {txt}")
-    await ctx.send(f'<@!{ctx.author.id}>, your request has been received.')
+    responses = ['Hello', 'Hi!', 'Hello!', 'Hi there', 'Hi there!', 'Howdy!', 'Hello!', 'Hi', 'Greetings', 'Salutations', 'Welcome',"Bonjour","Hola","Ciao","Olá","G’day","Privet","你好"]
+    await ctx.reply(random.choice(responses), mention_author=False)
 
 
 #calc() is for calculator
@@ -212,8 +201,8 @@ async def server(ctx, *args):
         embed.add_field(
             name='Actions',
             value=
-            '`boost`, `bots`, `create`, `emojis`, `events`, `features`, `giveaways`, `icon`, `invite`, `owner`, `members`, `rules`, `staff`',
-            inline=False)
+            '`boost`, `bots`, `create`, `emojis`, `events`, `features`', inline = False) #`giveaways`, `icon`, `invite`, `owner`, `members`, `rules`, `staff`',
+            #inline=False)
         embed.set_image(
             url=
             r'https://res.cloudinary.com/demo/image/upload/w_350,h_100,e_colorize,co_rgb:000000,r_5/l_text:Montserrat_25:ELC%20Homelands,co_rgb:FFFFFF,g_center/one_pixel.png'
@@ -221,7 +210,6 @@ async def server(ctx, *args):
         await ctx.reply(embed=embed, mention_author=False)
 
     elif args[0] == 'boost':
-        print("hi")
         embed = discord.Embed(title="Server Boost", color=0x808080)
         embed.set_author(name="Homelands Bot",
                          url='https://www.peelschools.org/Pages/default.aspx',
@@ -341,6 +329,17 @@ async def clock(ctx):
     import os
     os.remove(f'assets/temp/temp.png')
 
+#ping() is for people who want to ping the bot
+@bot.command()
+async def ping(ctx):
+    start = tme.time()
+    r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
+    infoping = f"{(tme.time() - start)*1000} ms"
+
+    embed = discord.Embed(title="Pong!", description = f"Response time : {infoping}")
+    embed.set_footer(text="Written with python")
+    await ctx.reply(embed=embed, mention_author=False)
+
 
 #rev() is for reversing a sentence. Ex: $rev <arg>
 @bot.command()
@@ -357,7 +356,7 @@ async def rev(ctx, *args):
 #poll() is for creating a  poll. Ex: $poll <arg>
 @bot.command()
 async def poll(ctx, *args):
-    if ctx.channel.id == 849714684856238100:
+    if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
         message = ''
         num = 0
         for item in args:
@@ -369,11 +368,11 @@ async def poll(ctx, *args):
     await ctx.message.delete()
 
 
-#poll() is for creating a  poll. Ex: $poll <arg>
+#uniquepoll() is for creating polls with special emojis. Ex: $poll <arg> 
 @bot.command()
 async def uniquepoll(ctx, *args):
     print(args)
-    if ctx.channel.id == 849714684856238100:
+    if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
         message = ''
         num = -1
         for item in args:
@@ -395,20 +394,6 @@ async def uniquepoll(ctx, *args):
         )
 
 
-#vote() is for creating a anonymous voting. Ex: $vote <arg>
-@bot.command()
-async def vote(ctx, *args):
-
-    x = ""
-    for item in args:
-        x += str(item)
-        x += " "
-    embed = discord.Embed(title="Poll!", description=x, color=0x808080)
-    embed.set_footer(text="Written with python")
-    await ctx.send(embed=embed)
-
-
-#resmessage is for resolution message ( For muted members)
 @bot.command()
 async def resmessage(ctx):
     if ctx.channel.id == 839205612386648125 or ctx.channel.id == 842831313634983976:
@@ -426,7 +411,6 @@ modlist_channels = [
     842823949037076520, 880096434421125190, 909529988200554546
 ]
 
-
 #post() is for posting. Ex: $post <arg>
 @bot.command()
 async def post(ctx, *args):
@@ -438,7 +422,7 @@ async def post(ctx, *args):
     message = await ctx.send(message)
     await ctx.message.delete()
 
-
+#its not here
 @bot.command(aliases=["changeday"])
 async def setday(ctx, *args):
     if ctx.channel.id in modlist_channels:
@@ -474,6 +458,11 @@ async def addrole(ctx, member: discord.Member, role: discord.Role):
 #Start
 @bot.event
 async def on_ready():
+    channel = bot.get_channel(919281999427043369)
+    embd = discord.Embed(title = "Connected", description = "Checking for errors...",  color=discord.Color.red())
+    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+    msg = await channel.send(embed=embd)
+
     bot.remove_command("help")
     #bot.add_command(bot_help)
 
@@ -481,22 +470,49 @@ async def on_ready():
     global file
     from scheduler import scheduler
     channel = bot.get_channel(919281999427043369)
-    #Check if pinging is up
+    #For changing due dates
+    from bot_func import cng_due
+    from googleapi import main, main2
+
+    #Error Checking
+    infoping = ''  
+
+    #HTTP Requests
+    executiontime = tme.time() 
     try:
         start = tme.time()
         r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
         error = "No"
+        des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {tme.time() - executiontime} seconds"
+        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+        await msg.edit(embed=embd)
     except:
         error = "An"
         await channel.send('Error in pinging bot. Priority is low.')
-
+    
+    #PIL Library
+    executiontime = tme.time() 
     try:
-        file = scheduler()
+        file= scheduler()
+        des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {tme.time() - executiontime} seconds"
+        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+        await msg.edit(embed=embd)
     except:
-        await channel.send(
-            '<&@918658730516697148, Error in PIL Library or the scheduler file. Priority is high during school periods'
-        )
+        await channel.send('<&@918658730516697148>, Error in PIL Library and generating time image. Priority is high during school times')
+
+    #Google API
+    try:
+        len805 = len(main())
+        len705 = len(main2())
+        des += f"\n\nGoogle API and duedate function passed.\nExecution time : {tme.time() - executiontime} seconds"
+        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+        await msg.edit(embed=embd)
+    except:
+        await channel.send('<&@918658730516697148>, Error in Google API ( Likely the token ). Priority is high.')
 
     clock = datetime.now(
         pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
@@ -506,16 +522,14 @@ async def on_ready():
     embed.add_field(
         name="Information",
         value=
-        f"Day = {db['day']}\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
+        f"Day = {db['day']}\n\n{len805} items in the 805 duedates list\n{len705} items in the 705 duedates list\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
     )
     embed.set_footer(text="Written with python")
     embed.set_image(url="attachment://temp.png")
     await channel.send(file=file, embed=embed)
     print('Logged on')
 
-    #For changing due dates
-    from bot_func import cng_due
-    from googleapi import main, main2
+    
 
     #For scheduling periods
     day = int(db['day'])
@@ -539,6 +553,8 @@ async def on_ready():
                         dueembed = cng_due(main2(), main())
                         return dueembed
                     except:
+                        channel = bot.get_channel(919281999427043369)
+                        channel.send("Error in Google API. Priority is high during school times.")
                         pass
             else:
                 return
@@ -553,8 +569,6 @@ async def on_ready():
             os.remove(r'assets/temp/temp.png')
         except:
             pass
-
-        #############################################################################################
 
         #Define variables
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
