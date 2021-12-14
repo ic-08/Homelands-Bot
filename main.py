@@ -393,6 +393,35 @@ async def uniquepoll(ctx, *args):
             "Not a valid format. Format is `$uniquepoll {prompt} {emoji1} {emoji2}`"
         )
 
+#Infection game
+@bot.command()
+async def infect(ctx, *args):
+    if db["infected"] == int(ctx.message.author.id):
+        try:
+            finlist = int(args[0])
+        except:
+            userid =list(args[0])
+            x = 0
+            finlist = ''
+            for item in userid:
+                if x < 4 or x == len(userid) -1:
+                    pass
+                else:
+                    finlist += str(item)
+
+            finlist = int(finlist)
+
+        db["infected"] =int(finlist)
+        channel = bot.get_channel(919281999427043369)
+        await channel.send(f'<@!{int(finlist)}> is infected')
+        user = await bot.fetch_user(int(finlist))
+        embd = discord.Embed(title = "You have been infected!",description = "Pass on the infection to someone else by typing `$infect {user id}` in an channel in the ELC server. Doing so will also remove the infection from you.\n\nIf you don't know how to get user id:\n\n1.Go to user settings\n2.Click on Advanced\n3.Turn on developer mode\n4.Press the Esc key\n5.Right click a user in the member list on the side and click Copy ID")
+        await user.send(embed=embd)
+        await ctx.message.delete()
+    else:
+        await ctx.send("You are not infected!")
+        await ctx.message.delete()
+
 
 @bot.command()
 async def resmessage(ctx):
@@ -485,7 +514,7 @@ async def on_ready():
         infoping = f"{(tme.time() - start)*1000} ms"
         error = "No"
         des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
         embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
         await msg.edit(embed=embd)
     except:
@@ -497,7 +526,7 @@ async def on_ready():
     try:
         file= scheduler()
         des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
         embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
         await msg.edit(embed=embd)
     except:
@@ -508,7 +537,7 @@ async def on_ready():
         len805 = len(main())
         len705 = len(main2())
         des += f"\n\nGoogle API and duedate function passed.\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Up", description = des,  color=discord.Color.red())
+        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
         embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
         await msg.edit(embed=embd)
     except:
