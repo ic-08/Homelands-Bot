@@ -530,9 +530,12 @@ async def on_ready():
         embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
         await msg.edit(embed=embd)
     except:
-        await channel.send('<&@918658730516697148>, Error in PIL Library and generating time image. Priority is high during school times')
+        await channel.send('<@918658730516697148>, Error in PIL Library and generating time image. Priority is high during school times')
 
     #Google API
+    len805 = []
+    len705 = []
+
     try:
         len805 = len(main())
         len705 = len(main2())
@@ -541,7 +544,7 @@ async def on_ready():
         embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
         await msg.edit(embed=embd)
     except:
-        await channel.send('<&@918658730516697148>, Error in Google API ( Likely the token ). Priority is high.')
+        await channel.send('<@918658730516697148>, Error in Google API ( Likely the token ). Priority is high.')
 
     clock = datetime.now(
         pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
@@ -572,21 +575,15 @@ async def on_ready():
         message = await channel.fetch_message(914295454840258601)
 
         def refreshdue():
-            if int(datetime.now(
-                    pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
-                print("Updated duedates")
-                #Try and except for tempoarily service errors for Google API
-                while True:
-                    try:
-                        #Refresh duedates
-                        dueembed = cng_due(main2(), main())
-                        return dueembed
-                    except:
-                        channel = bot.get_channel(919281999427043369)
-                        channel.send("Error in Google API. Priority is high during school times.")
-                        pass
-            else:
-                return
+            print("Updated duedates")
+            #Try and except for tempoarily service errors for Google API
+            while True:
+                try:
+                    #Refresh duedates
+                    dueembed = cng_due(main2(), main())
+                    return dueembed
+                except:
+                    pass
 
         #Import your subjects and periods
         from subjects import dict705, dict805, sub
@@ -613,9 +610,7 @@ async def on_ready():
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
             print("Holiday.")
             try:
-                cnl = bot.get_channel(887095059680477214)
-                message = await cnl.fetch_message(914295454840258601)
-                await message.edit(embed=refreshdue())
+                asyncio.run(refreshdue())
             except:
                 pass
             await asyncio.sleep(60)
@@ -724,26 +719,17 @@ async def on_ready():
                 )
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
-                file = discord.File("assets/temp/temp.png",
-                                    filename="temp.png")
+                file = discord.File("assets/temp/temp.png",filename="temp.png")
                 embed.set_image(url="attachment://temp.png")
                 print(f"Sent school period {index}")
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
 
                 #Refresh the duedates every period
-                while True:
-                    try:
-                        #Refresh duedates
-                        embed = cng_due(main2(), main())
-                        channel = bot.get_channel(887095059680477214)
-                        message = await channel.fetch_message(
-                            914295454840258601)
-                        await message.edit(embed=embed)
-                        print("Updated due dates")
-                        break
-                    except:
-                        pass
+                cnl = bot.get_channel(887095059680477214)
+                message = await cnl.fetch_message(914295454840258601)
+                await message.edit(embed=refreshdue())
+                
 
                 await asyncio.sleep(120)
 
@@ -754,6 +740,10 @@ async def on_ready():
                     pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
                 print("Not a vaild period. Checking in approx 5 seconds")
                 print(f"Current time : {current_time}")
+                if int(list(current_time)[4]) % 3 == 0:
+                    cnl = bot.get_channel(887095059680477214)
+                    message = await cnl.fetch_message(914295454840258601)
+                    await message.edit(embed=refreshdue())
                 await asyncio.sleep(5)
 
         #NOT YOUR TYPICAL SCHOOL DAY

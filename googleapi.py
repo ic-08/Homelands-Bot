@@ -7,7 +7,6 @@ from google.oauth2.credentials import Credentials
 import datetime
 from datetime import *
 import pytz
-from replit import db
 import time
 tme = time
 
@@ -24,9 +23,6 @@ convmonths = ["Janurary","Feburary","March","April","May","June","July","August"
 
 
 def main():
-    tokenfile = open("duedate/token.json", "w")
-    tokenfile.write(db['token1'])
-    tokenfile.close()
     global convmonhts
     classes805 = [
         'Homelands Spirit Hawks',
@@ -50,10 +46,10 @@ def main():
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
-        else:
+        else: 
             os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
             flow = InstalledAppFlow.from_client_secrets_file(
-                'duedate/client_secret_287614113489-rdfsa32332u970qusgto52vdoa4lh5lm.apps.googleusercontent.com.json',SCOPES)
+                'duedate/cred.json',SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('duedate/token.json', 'w') as token:
@@ -113,12 +109,6 @@ def main():
             except KeyError:
                 pass 
         
-        file = open('duedate/token.json', 'r')
-        db["token1"] = file.read()
-        file.close()
-
-        tokenfile = open("duedate/token.json", "w")
-        tokenfile.close()
         return due      
         
 
@@ -128,9 +118,6 @@ def main():
 
 
 def main2():
-    dantokenfile = open("duedate/danieltoken.json", "w")
-    dantokenfile.write(db['token2'])
-    dantokenfile.close()
 
     classes705 = [
         '705 Music',
@@ -157,7 +144,7 @@ def main2():
         else:
             os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
             flow = InstalledAppFlow.from_client_secrets_file(
-                'duedate/client_secret_287614113489-rdfsa32332u970qusgto52vdoa4lh5lm.apps.googleusercontent.com.json',SCOPES)
+                'duedate/cred.json',SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open('duedate/danieltoken.json', 'w') as token:
@@ -215,13 +202,6 @@ def main2():
                     
             except KeyError:
                 pass 
-
-        danfile = open('duedate/danieltoken.json', 'r')
-        db["token2"] = danfile.read()
-        danfile.close()
-
-        dantokenfile = open("duedate/danieltoken.json", "w")
-        dantokenfile.close()
         return due      
         
 
