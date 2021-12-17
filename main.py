@@ -362,9 +362,9 @@ async def poll(ctx, *args):
         for item in args:
             message += str(args[num]) + " "
             num += 1
-    message = await ctx.send(f"**{ctx.author}** asks : {message}")
-    await message.add_reaction("👍")
-    await message.add_reaction("👎")
+    msg = await ctx.send(f"**{ctx.author}** asks : {message}")
+    await msg.add_reaction("👍")
+    await msg.add_reaction("👎")
     await ctx.message.delete()
 
 
@@ -483,6 +483,14 @@ async def addrole(ctx, member: discord.Member, role: discord.Role):
     if ctx.channel.id in modlist_channels:
         await member.add_roles(role)
 
+@bot.command()
+async def react(ctx,*args):
+    channel = bot.get_channel(907754572179730433)
+    msg = await channel.fetch_message(str(args[0]))
+    await msg.add_reaction("✅")
+
+
+
 
 #Start
 @bot.event
@@ -505,6 +513,9 @@ async def on_ready():
 
     #Error Checking
     infoping = ''  
+    des = ''
+    skip = False
+
 
     #HTTP Requests
     executiontime = tme.time() 
@@ -512,25 +523,25 @@ async def on_ready():
         start = tme.time()
         r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
-        error = "No"
         des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-        await msg.edit(embed=embd)
     except:
-        error = "An"
-        await channel.send('Error in pinging bot. Priority is low.')
+        des = 'Error in pinging bot. Priority is low '
+    
+    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
+    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+    await msg.edit(embed=embd)
     
     #PIL Library
     executiontime = tme.time() 
     try:
         file= scheduler()
         des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-        await msg.edit(embed=embd)
     except:
-        await channel.send('<@918658730516697148>, Error in PIL Library and generating time image. Priority is high during school times')
+        des = 'Error in PIL Library and generating time image. Priority is high during school times'
+    
+    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
+    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+    await msg.edit(embed=embd)
 
     #Google API
     len805 = []
@@ -540,11 +551,12 @@ async def on_ready():
         len805 = len(main())
         len705 = len(main2())
         des += f"\n\nGoogle API and duedate function passed.\nExecution time : {tme.time() - executiontime} seconds"
-        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-        await msg.edit(embed=embd)
     except:
-        await channel.send('<@918658730516697148>, Error in Google API ( Likely the token ). Priority is high.')
+        des = ' Error in Google API ( Likely the token ). Priority is high.'
+    
+    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
+    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+    await msg.edit(embed=embd)
 
     clock = datetime.now(
         pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
