@@ -95,11 +95,60 @@ dict705 = {
         "7": "Music",
         "8": "Core"}}
 
+#605 schedule
+dict605 = {
+    "1": {
+        "1": "Core",
+        "2": "Core",
+        "3": "Core",
+        "4": "French",
+        "5": "Core",
+        "6": "Music",
+        "7": "Core",
+        "8": "Core"},
+    "2": {
+        "1": "Core",
+        "2": "Phys Ed",
+        "3": "Core",
+        "4": "Health/Art",
+        "5": "Core",
+        "6": "Core",
+        "7": "French",
+        "8": "Core"},
+    "3": {
+        "1": "Core",
+        "2": "Core",
+        "3": "Health/Art",
+        "4": "Core",
+        "5": "Core",
+        "6": "Core",
+        "7": "Music",
+        "8": "French"},
+    "4": {
+        "1": "Core",
+        "2": "Core",
+        "3": "STEAM",
+        "4": "Core",
+        "5": "Core",
+        "6": "Health/Art",
+        "7": "French",
+        "8": "Core"},
+    "5": {
+        "1": "Core",
+        "2": "STEAM",
+        "3": "Core",
+        "4": "French",
+        "5": "Core",
+        "6": "Core",
+        "7": "Core",
+        "8": "Phys Ed"}}
+
 
 def sub(day,cls):
     txt = ""
-    num = 1
     if cls == '705':
+        cls = dict705
+    elif cls == '605':
         cls = dict705
     else:
         cls = dict805

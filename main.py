@@ -15,6 +15,7 @@ from replit import db
 import requests
 import time
 
+from os import system
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
 bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online, help_command=None)
@@ -511,11 +512,11 @@ async def on_ready():
     from bot_func import cng_due
     from googleapi import main, main2
 
-    #Error Checking
+    ###ERROR CHECKING###
     infoping = ''  
     des = ''
-    skip = False
-
+    reboot = False
+    print(db['error'])
 
     #HTTP Requests
     executiontime = tme.time() 
@@ -524,8 +525,10 @@ async def on_ready():
         r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
         des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {tme.time() - executiontime} seconds"
+        errormsg = "No"
     except:
         des = 'Error in pinging bot. Priority is low '
+        errormsg = "An"
     
     embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
     embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
@@ -537,6 +540,7 @@ async def on_ready():
         file= scheduler()
         des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {tme.time() - executiontime} seconds"
     except:
+        reboot = True
         des = 'Error in PIL Library and generating time image. Priority is high during school times'
     
     embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
@@ -552,28 +556,55 @@ async def on_ready():
         len705 = len(main2())
         des += f"\n\nGoogle API and duedate function passed.\nExecution time : {tme.time() - executiontime} seconds"
     except:
+        reboot = True
         des = ' Error in Google API ( Likely the token ). Priority is high.'
-    
-    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-    await msg.edit(embed=embd)
 
-    clock = datetime.now(
-        pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
-    embed = discord.Embed(title='Homelands Bot is Online',
-                          description=f"Logged on as {bot.user} as of {clock}",
-                          color=discord.Color.green())
-    embed.add_field(
-        name="Information",
-        value=
-        f"Day = {db['day']}\n\n{len805} items in the 805 duedates list\n{len705} items in the 705 duedates list\n\n{error} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
-    )
-    embed.set_footer(text="Written with python")
-    embed.set_image(url="attachment://temp.png")
-    await channel.send(file=file, embed=embed)
+    #Error rebooting
+    if reboot == True and db["error"] == False:
+        channel = bot.get_channel(919281999427043369)
+        await channel.send("<@&879470018809692170> Error in bot. Reboot pending...")
+        print("Error in bot. Reboot pending...")
+        db["error"] = True
+        system("busybox reboot")
+    
+    #Error bypass ( Due to reboot failure )
+    if db['error'] == True and reboot == True:
+        channel = bot.get_channel(919281999427043369)
+        await channel.send("<@&879470018809692170> Error in bot. Reboot has completed, but the bot still has errors. Running anyways...")
+
+    
+
+    ###ERROR CHECKING### ( Above )
+
+
+
+
+    #CONNECTED MESSAGE#
+    if reboot == True:
+        pass
+    else:
+        embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
+        embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+        await msg.edit(embed=embd)
+
+        clock = datetime.now(
+            pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
+        embed = discord.Embed(title='Homelands Bot is Online',
+                            description=f"Logged on as {bot.user} as of {clock}",
+                            color=discord.Color.green())
+        embed.add_field(
+            name="Information",
+            value=
+            f"Day = {db['day']}\n\n{len805} items in the 805 duedates list\n{len705} items in the 705 duedates list\n\n{errormsg} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
+        )
+        embed.set_footer(text="Written with python")
+        embed.set_image(url="attachment://temp.png")
+        await channel.send(file=file, embed=embed)
+
     print('Logged on')
+    db["error"] = False
 
-    
+
 
     #For scheduling periods
     day = int(db['day'])
@@ -585,20 +616,10 @@ async def on_ready():
 
         channel = bot.get_channel(887095059680477214)
         message = await channel.fetch_message(914295454840258601)
-
-        def refreshdue():
-            print("Updated duedates")
-            #Try and except for tempoarily service errors for Google API
-            while True:
-                try:
-                    #Refresh duedates
-                    dueembed = cng_due(main2(), main())
-                    return dueembed
-                except:
-                    pass
+        
 
         #Import your subjects and periods
-        from subjects import dict705, dict805, sub
+        from subjects import dict705, dict805, dict605, sub
 
         #Find current time
         now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
@@ -608,48 +629,60 @@ async def on_ready():
         except:
             pass
 
-        #Define variables
+        #VARIABLES
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
-        day_of_the_week = [
-            'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday',
-            'Sunday'
-        ]
-        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
+        day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
         weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
+        def refreshdue():
+            print("Updated duedates")
+            #Try and except for tempoarary service errors for Google API
+            repeat = 0
+            while True:
+                if repeat > 2:
+                    break
+                try:
+                    #Refresh duedates
+                    dueembed = cng_due(main2(), main())
+                    return dueembed
+                except:
+                    repeat += 1
+                    pass
 
         #HOLIDAYS
         if datetime.now(
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
-            print("Holiday.")
-            try:
-                asyncio.run(refreshdue())
-            except:
-                pass
-            await asyncio.sleep(60)
+            print("Holiday. Refresh in 5 minutes")
+            channel = bot.get_channel(887095059680477214)
+            message = await channel.fetch_message(914295454840258601)
+            await message.edit(embed=refreshdue())
+            await asyncio.sleep(300)
 
         #WEEKEND
-        if day_of_the_week[x] not in weekdays:
-            print("Weekend.")
-            try:
-                cnl = bot.get_channel(887095059680477214)
-                message = await cnl.fetch_message(914295454840258601)
-                await message.edit(embed=refreshdue())
-            except:
-                pass
-            await asyncio.sleep(60)
+        elif day_of_the_week[x] not in weekdays:
+            print("Weekend. Refresh in 3 minutes")
+            channel = bot.get_channel(887095059680477214)
+            message = await channel.fetch_message(914295454840258601)
+            await message.edit(embed=refreshdue())
+            await asyncio.sleep(180)
 
         #SCHOOL DAY
-        elif day_of_the_week[x] in weekdays and hr <= 14:
-            channel = bot.get_channel(895778100854546493)
-            #Event periods
+        
+        #School hours
+        elif hr >=6 or hr <= 14:
+            print("School hours")
 
-            #Start of day
+            #Scheduler Channel
+            channel = bot.get_channel(895778100854546493)
+
+
+            #Start of the day ( 8:30 )
             if now_time == '08:30':
                 file = scheduler()
                 embed = discord.Embed(
                     title="Start of school",
                     description=
-                    f"It is now period 1. \n\n**705 has {dict705[str(day)]['1']}**\n\n**805 has {dict805[str(day)]['1']}**\n"
+                    f"It is now period 1. \n\n**605 has {dict605[str(day)]['1']}**\n\n**705 has {dict705[str(day)]['1']}**\n\n**805 has {dict805[str(day)]['1']}**\n"
                 )
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
@@ -661,11 +694,11 @@ async def on_ready():
                 await msg.publish()
                 await asyncio.sleep(120)
 
-            #Lunch
+            #Lunchtime
             elif now_time == '11:00':
                 file = scheduler()
                 embed = discord.Embed(title="Lunchtime",
-                                      description="Time for lunch! 😋")
+                                    description="Time for lunch! 😋")
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
                 file = discord.File("assets/temp/temp.png",
@@ -676,11 +709,11 @@ async def on_ready():
                 await msg.publish()
                 await asyncio.sleep(1800)  #Half an hour
 
-            #End of day
+            #End of the day ( 2:30 )
             elif now_time == '14:30':
                 file = scheduler()
                 embed = discord.Embed(title="End of school",
-                                      description="Have a nice day!")
+                                    description="Have a nice day!")
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
                 file = discord.File("assets/temp/temp.png",
@@ -707,7 +740,7 @@ async def on_ready():
                 embed = discord.Embed(
                     title=f"Good Afternoon!",
                     description=
-                    f"{day_prompt}:\n\n705 has:\n {sub(nday,'705')}\n\n805 has: \n {sub(nday,'805')}"
+                    f"{day_prompt}:\n\n605 has:\n {sub(nday,'605')}\n\n705 has:\n {sub(nday,'705')}\n\n805 has: \n {sub(nday,'805')}"
                 )
                 embed.add_field(name="Day:", value=nday)
                 embed.set_footer(text="Written with python")
@@ -727,7 +760,7 @@ async def on_ready():
                 embed = discord.Embed(
                     title=f"Period {index}",
                     description=
-                    f"It is now period {index}. \n\n**705 has {dict705[str(day)][str(index)]}**\n\n**805 has {dict805[str(day)][str(index)]}**"
+                    f"It is now period {index}. \n\n**605 has {dict605[str(day)][str(index)]}**\n\n**705 has {dict705[str(day)][str(index)]}**\n\n**805 has {dict805[str(day)][str(index)]}**"
                 )
                 embed.add_field(name="Day:", value=day)
                 embed.set_footer(text="Written with python")
@@ -744,8 +777,10 @@ async def on_ready():
                 
 
                 await asyncio.sleep(120)
-
+            
+            #Non-event periods
             else:
+                print("Non-event periods during school day")
                 cnl = bot.get_channel(887095059680477214)
                 message = await cnl.fetch_message(914295454840258601)
                 current_time = datetime.now(
@@ -757,31 +792,15 @@ async def on_ready():
                     message = await cnl.fetch_message(914295454840258601)
                     await message.edit(embed=refreshdue())
                 await asyncio.sleep(5)
-
-        #NOT YOUR TYPICAL SCHOOL DAY
+        
+        #Off school hours
         else:
-            print(
-                "Not a school day. Today is a holiday, weekend, or a off of school time."
-            )
-            #Refresh duedates
-            if int(datetime.now(
-                    pytz.timezone('US/Eastern')).strftime("%M")) % 3 == 0:
-                #Try and except for tempoarily service errors for Google API
-                while True:
-                    try:
-                        #Refresh duedates
-                        embed = cng_due(main2(), main())
-                        channel = bot.get_channel(887095059680477214)
-                        message = await channel.fetch_message(
-                            914295454840258601)
-                        await message.edit(embed=embed)
-                        print("Updated due dates")
-                        break
-                    except:
-                        pass
-                await asyncio.sleep(60)
-            else:
-                await asyncio.sleep(60)
+            print("School day but off school hours")
+            cnl = bot.get_channel(887095059680477214)
+            message = await cnl.fetch_message(914295454840258601)
+            await message.edit(embed=refreshdue())
+            await asyncio.sleep(180)
+
 
 
 bot.run(os.environ['discordtoken'])
