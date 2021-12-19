@@ -507,12 +507,18 @@ async def on_ready():
     #Startup
     global file
     from scheduler import scheduler
-    channel = bot.get_channel(919281999427043369)
+    
     #For changing due dates
-    from bot_func import cng_due
+    from bot_func import cng_due, weatherembed
     from googleapi import main, main2
+    
+
+    channel= bot.get_channel(922230146038132816)
+    weathermessage = await channel.fetch_message(922231492296445994)
+    await weathermessage.edit(embed=weatherembed())
 
     ###ERROR CHECKING###
+    channel = bot.get_channel(919281999427043369)
     infoping = ''  
     des = ''
     reboot = False
@@ -534,6 +540,19 @@ async def on_ready():
     embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
     await msg.edit(embed=embd)
     
+
+    #Weather API
+    executiontime = tme.time() 
+    try:
+        weatherembed()
+        des += f"\n\nWeather API and function passed ...\nExecution time : {tme.time() - executiontime} seconds"
+    except:
+        des = 'Error in Weather API. Priority is medium - Inform the public about the temporary error'
+    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
+    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
+    await msg.edit(embed=embd)
+
+
     #PIL Library
     executiontime = tme.time() 
     try:
@@ -634,7 +653,8 @@ async def on_ready():
         day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
         weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
         hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
-        def refreshdue():
+
+        def refresh():
             print("Updated duedates")
             #Try and except for tempoarary service errors for Google API
             repeat = 0
@@ -648,23 +668,28 @@ async def on_ready():
                 except:
                     repeat += 1
                     pass
+        
+        #Update weather embed
+        channel= bot.get_channel(922230146038132816)
+        weathermessage = await channel.fetch_message(922231492296445994)
+        await weathermessage.edit(embed=weatherembed())
 
         #HOLIDAYS
         if datetime.now(
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
-            print("Holiday. Refresh in 5 minutes")
+            print("Holiday. Refresh in 2 minutes")
             channel = bot.get_channel(887095059680477214)
             message = await channel.fetch_message(914295454840258601)
-            await message.edit(embed=refreshdue())
-            await asyncio.sleep(300)
+            await message.edit(embed=refresh())
+            await asyncio.sleep(120)
 
         #WEEKEND
         elif day_of_the_week[x] not in weekdays:
-            print("Weekend. Refresh in 3 minutes")
+            print("Weekend. Refresh in 1 minute")
             channel = bot.get_channel(887095059680477214)
             message = await channel.fetch_message(914295454840258601)
-            await message.edit(embed=refreshdue())
-            await asyncio.sleep(180)
+            await message.edit(embed=refresh())
+            await asyncio.sleep(60)
 
         #SCHOOL DAY
         
@@ -773,7 +798,7 @@ async def on_ready():
                 #Refresh the duedates every period
                 cnl = bot.get_channel(887095059680477214)
                 message = await cnl.fetch_message(914295454840258601)
-                await message.edit(embed=refreshdue())
+                await message.edit(embed=refresh())
                 
 
                 await asyncio.sleep(120)
@@ -790,7 +815,7 @@ async def on_ready():
                 if int(list(current_time)[4]) % 3 == 0:
                     cnl = bot.get_channel(887095059680477214)
                     message = await cnl.fetch_message(914295454840258601)
-                    await message.edit(embed=refreshdue())
+                    await message.edit(embed=refresh())
                 await asyncio.sleep(5)
         
         #Off school hours
@@ -798,7 +823,7 @@ async def on_ready():
             print("School day but off school hours")
             cnl = bot.get_channel(887095059680477214)
             message = await cnl.fetch_message(914295454840258601)
-            await message.edit(embed=refreshdue())
+            await message.edit(embed=refresh())
             await asyncio.sleep(180)
 
 
