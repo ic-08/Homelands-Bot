@@ -180,6 +180,7 @@ async def calc(ctx, *args):
         pass
 
 
+
 #server() is for server details. Ex: $server
 @bot.command()
 async def server(ctx, *args):
@@ -471,13 +472,6 @@ async def setday(ctx, *args):
         await ctx.send("You can't do that")
 
 
-@bot.command()
-async def test(ctx):
-    from bot_func import cng_due
-    from googleapi import main, main2
-    embd = cng_due(main2(), main())
-    await ctx.send(embed=embd)
-
 
 @bot.command()
 async def addrole(ctx, member: discord.Member, role: discord.Role):
@@ -513,9 +507,6 @@ async def on_ready():
     from googleapi import main, main2
     
 
-    channel= bot.get_channel(922230146038132816)
-    weathermessage = await channel.fetch_message(922231492296445994)
-    await weathermessage.edit(embed=weatherembed())
 
     ###ERROR CHECKING###
     channel = bot.get_channel(919281999427043369)
@@ -629,7 +620,7 @@ async def on_ready():
     day = int(db['day'])
 
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-    holidays = ['10:11', "11:12"]
+    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','1:01','1:02']
 
     while True:
 
@@ -670,9 +661,9 @@ async def on_ready():
                     pass
         
         #Update weather embed
-        channel= bot.get_channel(922230146038132816)
-        weathermessage = await channel.fetch_message(922231492296445994)
-        await weathermessage.edit(embed=weatherembed())
+        #channel= bot.get_channel(922230146038132816)
+        #weathermessage = await channel.fetch_message(922231492296445994)
+        #await weathermessage.edit(embed=weatherembed())
 
         #HOLIDAYS
         if datetime.now(

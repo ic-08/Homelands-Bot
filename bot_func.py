@@ -103,9 +103,11 @@ def findday(second):
 
 #Create a weather embed
 def weatherembed():
+    return
     base_url = 'https://api.openweathermap.org/data/2.5/onecall?lat=43.523365520378476&lon=-79.66657897048847&exclude=minutely,daily,alerts&appid=e8667dca125b603f58a42482dbe11cdc'
     response = requests.get(base_url)
     x = response.json()
+    print(x)
     current = x['current']
     hourly = x['hourly']
     currentmod = ''
