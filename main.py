@@ -115,7 +115,7 @@ async def credits(ctx):
     embd.add_field(
         name='Developers',
         value=
-        "**Isaac**, your official macho man.\n**James**, wielder of the flying axe <:flyingaxe:884865624914939975>.\n**Daniel**, Hollywood alias 'Daniellus Di'Egro'."
+        "**Isaac**, your official macho man.\n**James**, wielder of the flying axe <:flyingaxe:884865624914939975>.\n**Daniel**, Hollywood alias 'Daniellus Di'Egro'\n**Christopher**, Eopic kid."
     )
     embd.add_field(
         name='Contributors',
@@ -283,14 +283,11 @@ async def server(ctx, *args):
                          url='https://www.peelschools.org/Pages/default.aspx',
                          icon_url="https://www.microcad.ca/images/pdsb.png")
         embed.add_field(
-            name='--',
-            value=
-            'Isaac and James are so cool and smart <:wink:891113149728698368>')
-        embed.add_field(
             name='**Here is a list of our Emojis!**\n',
             value=
-            f'<:angery:875389778550468648> - Heh\n<:babyisaac:875390321943511100> - Haha chubby\n<:carlbot:857614103232380932> - Tortle\n<:flyingaxe:884865624914939975> - James wields this... beware\n<:gasp:872176337618628648> - *Gasp*\n<:godiedieinawholehole:852669994684514334> - Cmon Aimee\n<:grumpycat:857614180852695080> - l o l\n<:imsuingyoulady:852669995188092959> - Cmon Aimee\n<:ohno:859976978551013396> - Oh no... \n<:ulittlebush:852669975218749460> - Cmon Aimee\n<:why:873303024053928076> - Why\n<:winky:888892068842319953> - One of the first custom emojis in our server!',
+            f'<:angery:875389778550468648> - Heh\n<:babyisaac:875390321943511100> - Haha chubby\n<:carlbot:857614103232380932> - Tortle\n<:flyingaxe:884865624914939975> - James wields this... beware\n<:gasp:872176337618628648> - *Gasp*\n<:godiedieinawholehole:852669994684514334> - Cmon Aimee\n<:grumpycat:857614180852695080> - l o l\n<:imsuingyoulady:852669995188092959> - Cmon Aimee\n<:ohno:859976978551013396> - Oh no... \n<:ulittlebush:852669975218749460> - Cmon Aimee\n<:why:873303024053928076> - Why\n<:winky:888892068842319953> - One of the first custom emojis in our server!\n<:Wizardhat:909435141288501328> - You\'re a wizard, Harry!\n<:adios:897096452856250389> - Goodbye\n<:disappointed:916513763778252810> - Conan when you tell him you play Genshin\n<:doublepong:911047080007593994> - haha ping go brrr\n',
             inline=False)
+        embed.add_field(name='.',value='<:drainedcat:911012930080886804> - No explanation needed**.**\n<:frickkk:917913815713189898> - We all know this feeling\n<:huh:914561577515102268> - *Visible confusion*\n<:invis:896410118797795381> - ...\n<:mydadznutz:909514397905465424> - Crunchy!\n<:mydadznutz2:909515229686276117> - Yum!\n<:omg:916697166146326530> - Isaac\'s pure ricjness\n<:ouch:916704152632045650> - Your face\n<:pensivecowboy:919251960190877729> - No explanation needed\n<a:ohno:914563971170852916> - Oh no...\n<:pixelsadge:919252433299996712> - We all know this feeling\n<:pong:909492236843106355> - haha ping go brrr\n<:pooprollingeyes:914634018111242313> - The emojis that Isabella hates\n<:smuggie:919251740166062100> - l o l\n<:tsktsk:914540098920546316> - tsktsk\n<:wide_daniel:895842460482285628> - Ricj man, but wider')
         embed.set_footer(
             text="$server [keyword] • Use !server for a list of keywords!")
         embed.set_image(
@@ -415,7 +412,7 @@ async def infect(ctx, *args):
 
         db["infected"] =int(finlist)
         channel = bot.get_channel(919281999427043369)
-        await channel.send(f'<@!{int(finlist)}> is infected')
+        await channel.send(f'<@!{int(finlist)}> is infected') 
         user = await bot.fetch_user(int(finlist))
         embd = discord.Embed(title = "You have been infected!",description = "Pass on the infection to someone else by typing `$infect {user id}` in an channel in the ELC server. Doing so will also remove the infection from you.\n\nIf you don't know how to get user id:\n\n1.Go to user settings\n2.Click on Advanced\n3.Turn on developer mode\n4.Press the Esc key\n5.Right click a user in the member list on the side and click Copy ID")
         await user.send(embed=embd)
@@ -427,7 +424,7 @@ async def infect(ctx, *args):
 
 @bot.command()
 async def resmessage(ctx):
-    if ctx.channel.id == 839205612386648125 or ctx.channel.id == 842831313634983976:
+    if ctx.channel.id == 922532597660274739 or ctx.channel.id == 922532805311868999:
         embed = discord.Embed(
             title="Welcome to res room",
             description=
@@ -521,7 +518,7 @@ async def on_ready():
         start = tme.time()
         r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
-        des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {tme.time() - executiontime} seconds"
+        des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
         errormsg = "No"
     except:
         des = 'Error in pinging bot. Priority is low '
@@ -536,7 +533,7 @@ async def on_ready():
     executiontime = tme.time() 
     try:
         weatherembed()
-        des += f"\n\nWeather API and function passed ...\nExecution time : {tme.time() - executiontime} seconds"
+        des += f"\n\nWeather API and function passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
     except:
         des = 'Error in Weather API. Priority is medium - Inform the public about the temporary error'
     embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
@@ -548,7 +545,7 @@ async def on_ready():
     executiontime = tme.time() 
     try:
         file= scheduler()
-        des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {tme.time() - executiontime} seconds"
+        des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
     except:
         reboot = True
         des = 'Error in PIL Library and generating time image. Priority is high during school times'
@@ -564,7 +561,7 @@ async def on_ready():
     try:
         len805 = len(main())
         len705 = len(main2())
-        des += f"\n\nGoogle API and duedate function passed.\nExecution time : {tme.time() - executiontime} seconds"
+        des += f"\n\nGoogle API and duedate function passed.\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
     except:
         reboot = True
         des = ' Error in Google API ( Likely the token ). Priority is high.'
@@ -605,7 +602,7 @@ async def on_ready():
         embed.add_field(
             name="Information",
             value=
-            f"Day = {db['day']}\n\n{len805} items in the 805 duedates list\n{len705} items in the 705 duedates list\n\n{errormsg} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
+            f"Day = {db['day']}\n\n<@!{int(db['infected'])}> is infected\n\n{len805} items in the 805 duedates list\n{len705} items in the 705 duedates list\n\n{errormsg} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
         )
         embed.set_footer(text="Written with python")
         embed.set_image(url="attachment://temp.png")
