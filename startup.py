@@ -13,7 +13,7 @@ app = Flask('')
 def home():
    return "Server up"
 def run():
-  app.run(host='0.0.0.0',port=8080)
+  app.run(host='0.0.0.0',port=5000)
 
 
 tme = time #Define time because it will get mixed up with datetime module
