@@ -15,6 +15,9 @@ from replit import db
 import requests
 import time
 
+
+
+
 from os import system
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
@@ -433,7 +436,10 @@ async def resmessage(ctx):
         await ctx.channel.send(embed=embed)
 
 
-#Anything below this is for moderation
+
+
+
+#MODERATION
 modlist_channels = [
     839141157774426142, 846813361177755648, 887097189443207228,
     842823949037076520, 880096434421125190, 909529988200554546
@@ -481,12 +487,40 @@ async def react(ctx,*args):
     msg = await channel.fetch_message(str(args[0]))
     await msg.add_reaction("✅")
 
+@bot.command(aliases=['reboot','refresh'])
+async def restart(ctx):
+    if ctx.channel.id in modlist_channels:
+        await ctx.send("Restarting...")
+        channel = int(ctx.channel.id)
+        db["restartctx"] = channel
+        system('busybox reboot')
+        
 
 
 
-#Start
+
+
+
+
+
+###################Start
 @bot.event
 async def on_ready():
+
+    #Restart command finished ( Messages the user after restart command has completed)
+    if db["restartctx"] != 0:
+        cnl = db['restartctx']
+        channel = bot.get_channel(cnl)
+        await channel.send("Restart finished")
+        db["restartctx"] = 0
+    
+
+
+
+    #If you want the bot to do anything when the bot restarts , put it above this comment
+    #I got a bit messy underneath this line 
+
+
     channel = bot.get_channel(919281999427043369)
     embd = discord.Embed(title = "Connected", description = "Checking for errors...",  color=discord.Color.red())
     embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
@@ -584,8 +618,6 @@ async def on_ready():
     ###ERROR CHECKING### ( Above )
 
 
-
-
     #CONNECTED MESSAGE#
     if reboot == True:
         pass
@@ -613,9 +645,9 @@ async def on_ready():
 
 
 
+
     #For scheduling periods
     day = int(db['day'])
-
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
     holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','1:01','1:02']
 
@@ -815,8 +847,15 @@ async def on_ready():
             await asyncio.sleep(180)
 
 
+#For exceeding API rate limit
+try:
+    bot.run(os.environ['discordtoken'])
+except:
+    system('busybox reboot')
 
-bot.run(os.environ['discordtoken'])
+
+
+
 
 #Commentary and Information
 

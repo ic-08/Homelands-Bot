@@ -9,6 +9,8 @@ from datetime import *
 import pytz
 import time
 tme = time
+from replit import db
+
 
 
 # If modifying these scopes, delete the file token.json.
@@ -108,15 +110,8 @@ def main():
                     
             except KeyError:
                 pass 
-        
         return due      
         
-
-
-
-
-
-
 def main2():
 
     classes705 = [
@@ -202,6 +197,7 @@ def main2():
                     
             except KeyError:
                 pass 
+                
         return due      
         
 
