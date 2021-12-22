@@ -492,13 +492,9 @@ async def restart(ctx):
     if ctx.channel.id in modlist_channels:
         await ctx.send("Restarting...")
         channel = int(ctx.channel.id)
-        db["restartctx"] = channel
+        db["restartctx"] = str(channel) + " " + str(tme.time())
         system('busybox reboot')
         
-
-
-
-
 
 
 
@@ -510,8 +506,10 @@ async def on_ready():
     #Restart command finished ( Messages the user after restart command has completed)
     if db["restartctx"] != 0:
         cnl = db['restartctx']
-        channel = bot.get_channel(cnl)
-        await channel.send("Restart finished")
+        cnl = cnl.split()
+        channel = bot.get_channel(int(cnl[0]))
+        embd = discord.Embed(title = "Connected", description = f"Restart finished.\nExecuted in {tme.time() - float(cnl[1])}",  color=discord.Color.green())
+        await channel.send(embed=embd)
         db["restartctx"] = 0
     
 
