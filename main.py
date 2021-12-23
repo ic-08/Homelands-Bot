@@ -427,7 +427,7 @@ async def infect(ctx, *args):
 
 @bot.command()
 async def resmessage(ctx):
-    if ctx.channel.id == 922532597660274739 or ctx.channel.id == 922532805311868999:
+    if ctx.channel.id == 922532597660274739 or ctx.channel.id == 923020245512384512:
         embed = discord.Embed(
             title="Welcome to res room",
             description=
@@ -650,17 +650,11 @@ async def on_ready():
     holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','1:01','1:02']
 
     while True:
-
-        channel = bot.get_channel(887095059680477214)
-        message = await channel.fetch_message(914295454840258601)
         
-
         #Import your subjects and periods
         from subjects import dict705, dict805, dict605, sub
-
-        #Find current time
+        #CUrrent time
         now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
-
         try:
             os.remove(r'assets/temp/temp.png')
         except:
@@ -687,25 +681,31 @@ async def on_ready():
                     repeat += 1
                     pass
         
-        #Update weather embed
-        #channel= bot.get_channel(922230146038132816)
-        #weathermessage = await channel.fetch_message(922231492296445994)
-        #await weathermessage.edit(embed=weatherembed())
 
+
+
+    
+        #RESTART ( AT 1 am )
+        if hr == 1:
+            channel = bot.get_channel(919281999427043369)
+            await channel.send("Nighttime reboot starting in 1 hour\nBot will not refresh during this time")
+            await asyncio.sleep(3600)
+            system('busybox reboot')
+            
+
+        #Duedate embed message
+        channel = bot.get_channel(887095059680477214)
+        message = await channel.fetch_message(914295454840258601)
         #HOLIDAYS
         if datetime.now(
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
             print("Holiday. Refresh in 2 minutes")
-            channel = bot.get_channel(887095059680477214)
-            message = await channel.fetch_message(914295454840258601)
             await message.edit(embed=refresh())
             await asyncio.sleep(120)
 
         #WEEKEND
         elif day_of_the_week[x] not in weekdays:
             print("Weekend. Refresh in 1 minute")
-            channel = bot.get_channel(887095059680477214)
-            message = await channel.fetch_message(914295454840258601)
             await message.edit(embed=refresh())
             await asyncio.sleep(60)
 
