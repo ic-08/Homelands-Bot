@@ -18,6 +18,7 @@ import time
 
 
 
+
 from os import system
 #Start up@
 activity = discord.Game(name="$help | $cmd for commands")
@@ -427,7 +428,7 @@ async def infect(ctx, *args):
 
 @bot.command()
 async def resmessage(ctx):
-    if ctx.channel.id == 922532597660274739 or ctx.channel.id == 923020245512384512:
+    if ctx.channel.id == 923714584462884894 or ctx.channel.id == 923020245512384512:
         embed = discord.Embed(
             title="Welcome to res room",
             description=
@@ -683,15 +684,13 @@ async def on_ready():
         
 
 
-
+        if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
+            from bot_func import weatherembed
+            channel = bot.get_channel(922230146038132816)
+            message = await channel.fetch_message(922231492296445994)
+            await message.edit(embed=weatherembed())
     
-        #RESTART ( AT 1 am )
-        if hr == 1:
-            channel = bot.get_channel(919281999427043369)
-            await channel.send("Nighttime reboot starting in 1 hour\nBot will not refresh during this time")
-            await asyncio.sleep(3600)
-            system('busybox reboot')
-            
+
 
         #Duedate embed message
         channel = bot.get_channel(887095059680477214)
@@ -847,7 +846,7 @@ async def on_ready():
 
 #For exceeding API rate limit
 try:
-    bot.run(os.environ['discordtoken'])
+    bot.run(os.environ['discordtoken'],reconnect=True)
 except:
     system('busybox reboot')
 
