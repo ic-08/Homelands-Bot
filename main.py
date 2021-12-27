@@ -495,7 +495,7 @@ async def restart(ctx):
         await ctx.send("Restarting...")
         channel = int(ctx.channel.id)
         db["restartctx"] = str(channel) + " " + str(tme.time())
-        system('busybox reboot')
+        sys.exit()
         
 
 
