@@ -6,6 +6,9 @@ from threading import Thread
 import time
 import requests
 from replit import db
+import sys
+from sys import *
+from replit import *
 tme = time
 
 #Flask
@@ -26,7 +29,7 @@ def statuscheck():
             print(f"Bot status : {x[0]['status']}")
             if x[0]['status'] != 'ONLINE':
                 print("Bot offline")
-                system('busybox reboot')
+                sys.exit()
             tme.sleep(10)
         except:
             print("Server down")
