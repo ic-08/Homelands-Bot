@@ -11,6 +11,9 @@ from sys import *
 from replit import *
 tme = time
 
+
+
+
 #Flask
 app = Flask('')
 @app.route('/', methods=['GET'])
@@ -39,6 +42,15 @@ def statuscheck():
 def keepalive2():
     while True:
         nowtime = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
+
+        #Reboot at 1 a.m.
+        if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H")) == 1:
+            day = datetime.now(pytz.timezone('US/Eastern')).strftime("%B %d ,%Y")
+            print(f"Today is {day}") 
+            tme.sleep(3600)
+            sys.exit()
+        
+        #Code check
         print(f"\n\n\n\nAlive as of {nowtime}")
         tme.sleep(60)
 
