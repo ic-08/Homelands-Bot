@@ -2,9 +2,7 @@
 #THANK YOU FOR YOUR COOPERATION AND UNDERSTANDING
 
 from discord.ext import commands
-import asyncio
 import os
-from startup import startup
 from scheduler import scheduler
 import datetime
 from datetime import * 
@@ -15,6 +13,7 @@ from replit import db
 import requests
 import time
 import sys
+from threading import Thread
 
 
 
@@ -28,7 +27,6 @@ bot.strip_after_prefix = True
 tme = time
 print(f"Repl Database keys in use : {db.keys()}")
 #bot.remove_command('help')
-startup()
 
 
 ## BELOW USED FOR BOT ##
@@ -340,7 +338,7 @@ async def ping(ctx):
     r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
     infoping = f"{(tme.time() - start)*1000} ms"
 
-    embed = discord.Embed(title="Pong!", description = f"Response time : {infoping}")
+    embed = discord.Embed(title="Pong!", description = f"Response time : {infoping}\nPing status : {r}")
     embed.set_footer(text="Written with python")
     await ctx.reply(embed=embed, mention_author=False)
 
@@ -652,6 +650,7 @@ async def on_ready():
     holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','1:01','1:02']
 
     while True:
+        import asyncio
         
         #Import your subjects and periods
         from subjects import dict705, dict805, dict605, sub
@@ -845,11 +844,25 @@ async def on_ready():
             await asyncio.sleep(180)
 
 
-#For exceeding API rate limit
-try:
+
+
+from startup import run,keepalive2
+t = Thread(target=run)
+t.daemon = True
+t.start()
+
+t1 = Thread(target=keepalive2)
+t1.daemon = True
+t1.start()
+
+while True:
     bot.run(os.environ['discordtoken'],reconnect=True)
-except:
-    system('busybox reboot')
+
+
+t.join()
+t1.join()
+sys.exit()
+
 
 
 

@@ -2,5 +2,5 @@ while true; do
   python main.py
 done
 
-#Whener the code terminates itself, it automatically re-runs it as shown in this shell script.
+#Whenever the code terminates itself, it automatically re-runs it as shown in this shell script.
 #This is for reboots, but it doesn't make a difference to manual runs/re-runs.

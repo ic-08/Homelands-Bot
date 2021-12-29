@@ -13,7 +13,6 @@ tme = time
 
 
 
-
 #Flask
 app = Flask('')
 @app.route('/', methods=['GET'])
@@ -24,23 +23,21 @@ def run():
   app.run(host='0.0.0.0',port=5000)
 
 
-def statuscheck():
-    while True:
-        try:
-            r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=1000)
-            x = r.json()
-            print(f"Bot status : {x[0]['status']}")
-            if x[0]['status'] != 'ONLINE':
-                print("Bot offline")
-                sys.exit()
-            tme.sleep(10)
-        except:
-            print("Server down")
-
-
-
 def keepalive2():
+    iteration = int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1])
     while True:
+        r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
+        x = r.json()
+        print(f"Bot status : {x[0]['status']}")
+        if x[0]['status'] != 'ONLINE' and db['offtime'] == 0:
+            print("Bot offline")
+            db['offtime'] = tme.time()
+        if db['offtime'] != 0 and tme.time() - db['offtime'] > 30 and x[0]['status'] != 'ONLINE':
+            print("Rebooting")
+            db['offtime'] = 0
+            break
+
+        #Time update
         nowtime = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
 
         #Reboot at 1 a.m.
@@ -48,23 +45,21 @@ def keepalive2():
             day = datetime.now(pytz.timezone('US/Eastern')).strftime("%B %d ,%Y")
             print(f"Today is {day}") 
             tme.sleep(3600)
-            sys.exit()
-        
-        #Code check
-        print(f"\n\n\n\nAlive as of {nowtime}")
-        tme.sleep(60)
+            break
 
-        
+        roundnumber = list(str(iteration))
+        if int(roundnumber[len(roundnumber)-1]) == int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1]):
+            iteration += 1
+            print(f"\n\n\n\nAlive as of {nowtime}")
 
-def startup():
-    t = Thread(target=run)
-    t.start()
+        tme.sleep(10)
 
-    t1 = Thread(target=keepalive2)
-    t1.start()
+    sys.exit()
 
-    t2 = Thread(target=statuscheck)
-    t2.start()
+
+
+
+
 
 
    

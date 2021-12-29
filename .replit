@@ -1,5 +1,5 @@
 run="sh main.sh"
 
-entrypoint = "README.md"
+entrypoint = "main.py"
 
 language="python3"
