@@ -26,16 +26,19 @@ def run():
 def keepalive2():
     iteration = int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1])
     while True:
-        r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
-        x = r.json()
-        print(f"Bot status : {x[0]['status']}")
-        if x[0]['status'] != 'ONLINE' and db['offtime'] == 0:
-            print("Bot offline")
-            db['offtime'] = tme.time()
-        if db['offtime'] != 0 and tme.time() - db['offtime'] > 30 and x[0]['status'] != 'ONLINE':
-            print("Rebooting")
-            db['offtime'] = 0
-            break
+        try:
+            r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
+            x = r.json()
+            if x[0]['status'] != 'ONLINE' and db['offtime'] == 0:
+                print("Bot offline")
+                print(f"Bot status : {x[0]['status']}")
+                db['offtime'] = tme.time()
+            if db['offtime'] != 0 and tme.time() - db['offtime'] > 30 and x[0]['status'] != 'ONLINE':
+                print("Rebooting")
+                db['offtime'] = 0
+                break
+        except:
+            pass
 
         #Time update
         nowtime = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
@@ -51,6 +54,7 @@ def keepalive2():
         if int(roundnumber[len(roundnumber)-1]) == int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1]):
             iteration += 1
             print(f"\n\n\n\nAlive as of {nowtime}")
+            print(f"Bot status : {x[0]['status']}/n")
 
         tme.sleep(10)
 
