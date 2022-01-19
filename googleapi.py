@@ -75,7 +75,6 @@ def main():
         
         due = []
 
-        print('Google Classroom API running...\nCurrently working on class 805')
         for course in courses:
             try:
                 work = service.courses().courseWork().list(courseId=course[u'id']).execute()
@@ -163,8 +162,7 @@ def main2():
             'day' : int(shortcutday.strftime("%d"))}
         
         due = []
-
-        print('Google Classroom API running...\nCurrently working on class 705')
+        
         for course in courses:
             try:
                 work = service.courses().courseWork().list(courseId=course[u'id']).execute()

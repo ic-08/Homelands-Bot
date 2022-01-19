@@ -24,7 +24,7 @@ def run():
 
 
 def keepalive2():
-    iteration = int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1])
+    iteration = 6
     while True:
         try:
             r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
@@ -37,6 +37,9 @@ def keepalive2():
                 print("Rebooting")
                 db['offtime'] = 0
                 break
+            if x[0]['status'] == 'ONLINE' and db['offtime'] != 0:
+                db['offtime'] = 0
+                
         except:
             pass
 
@@ -50,16 +53,14 @@ def keepalive2():
             tme.sleep(3600)
             break
 
-        roundnumber = list(str(iteration))
-        if int(roundnumber[len(roundnumber)-1]) == int(list(str(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")))[1]):
-            iteration += 1
+        if iteration % 6 == 0:
             print(f"\n\n\n\nAlive as of {nowtime}")
-            print(f"Bot status : {x[0]['status']}/n")
+            print(f"Bot status : {str(x[0]['status'])}\n")
 
+        iteration += 1
         tme.sleep(10)
 
-    sys.exit()
-
+    return
 
 
 

@@ -61,7 +61,7 @@ def cng_due(due705,due805):
 
 ##### FOR THE GOOGLEAPI ONLY #####
 def alter(dat):
-    convmonths = ["Janurary","Feburary","March","April","May","June","July","August","September","October","November","December"]
+    convmonths = ["January","Feburary","March","April","May","June","July","August","September","October","November","December"]
     bigmonths = [1,3,5,6,7,9,10,12]
 
     if dat[1] == 1 and dat[0] not in bigmonths:
@@ -97,15 +97,27 @@ def clearConsole():
     os.system(command)
 
 #Convert second time to real life time
-def findday(second):
-    second = second - 18000
-    return datetime.fromtimestamp(second).strftime("%A, %B %d, %Y %H:%M:%S")
+def findday(second,*args):
+    second = second - 18000 #Change to Toronto timezone
+    try:
+        temp = args[0]
+        return datetime.fromtimestamp(second).strftime("%H:%M:%S")
+    except:
+        return datetime.fromtimestamp(second).strftime("%A, %B %d, %Y %H:%M:%S")
 
 #Create a weather embed
 def weatherembed():
-    base_url = 'https://api.openweathermap.org/data/2.5/onecall?lat=43.523365520378476&lon=-79.66657897048847&exclude=minutely,daily,alerts&appid=c60c87b8057579c58bf1b21e7bbdf86b'
-    response = requests.get(base_url)
-    x = response.json()
+    try:
+        base_url = 'https://api.openweathermap.org/data/2.5/onecall?lat=43.523365520378476&lon=-79.66657897048847&exclude=&appid=00690130308a127174f58a7a073c7ca7'
+        response = requests.get(base_url)
+        x = response.json()
+        current = x['current']
+        hourly = x['hourly']
+    except:
+        base_url = 'https://api.openweathermap.org/data/2.5/onecall?lat=43.523365520378476&lon=-79.66657897048847&exclude=&appid=c60c87b8057579c58bf1b21e7bbdf86b'
+        response = requests.get(base_url)
+        x = response.json()
+
     current = x['current']
     hourly = x['hourly']
     currentmod = ''
@@ -121,7 +133,8 @@ def weatherembed():
     currentmod += current['weather'][0]['description']
 
     embed = discord.Embed(title='Weather',description=f"**Current**\n\n{findday(current['dt'])}\n\n{currentmod}")
-    embed.set_image(url = "https://media.discordapp.net/attachments/922230146038132816/922239336169230386/rain-umbrella-vancouver-weather.jpg?width=1198&height=4")
+
+    embed.add_field(name="Hourly", value = "--\n\n",inline = False)
 
     hours = 0
     for item in hourly:
@@ -136,9 +149,46 @@ def weatherembed():
         final += f"\nDescription :\n"
         final += item['weather'][0]['main'] + "-"
         final += item['weather'][0]['description'] 
+
         embed.add_field(name=datetime.fromtimestamp(item['dt']-18000).strftime("%B %d\n %H:%M:%S"), value = final)
+
+    
+    embed.add_field(name="Daily", value = "--\n\n",inline = False)
+    
+    days = 0
+    for item in x['daily']:
+        if days > 5:
+            break
+        days += 1
+        daily = ''
+        daily += f"Sunrise : {findday(item['sunrise'],True)}"
+        daily += f"\nSunset : {findday(item['sunset'],True)}"
+        daily += f"\nMoonrise : {findday(item['moonrise'],True)}"
+        daily += f"\nMoonset : {findday(item['moonset'],True)}"
+        daily += f"\nMax: {round(item['temp']['max']-273.15,4)}°C"
+        daily += f"\nMin: {round(item['temp']['min']-273.15,4)}°C"
+        daily += f"\nMorning: {round(item['temp']['morn']-273.15,4)}°C"
+        daily += f"\nEvening: {round(item['temp']['eve']-273.15,4)}°C"
+        daily += f"\nNight: {round(item['temp']['night']-273.15,4)}°C\n\nFeels like  :"
+        daily += f"\nMorning: {round(item['feels_like']['morn']-273.15,4)}°C"
+        daily += f"\nEvening: {round(item['feels_like']['eve']-273.15,4)}°C"
+        daily += f"\nNight: {round(item['feels_like']['night']-273.15,4)}°C"
+        daily += f"\nHumidity : {item['humidity']}%"
+        daily += f"\nUVI : {item['uvi']}"
+        daily += f"\nDescription :\n"
+        daily += item['weather'][0]['main'] + "-"
+        daily += item['weather'][0]['description'] 
+
+        embed.add_field(name=datetime.fromtimestamp(item['dt']-18000).strftime("%B %d\n %H:%M:%S"), value = daily) 
+
+    try:
+        temp = x['alerts']
+        embed.add_field(name="Alerts", value = f"Start time : {findday(x['alerts'][0]['start'])}\nEnd time : {findday(x['alerts'][0]['end'])}\n\n Alert : {x['alerts'][0]['description']}")
+    except:
+        embed.add_field(name="Alerts", value = f"No alerts at this time")
+
     timenow = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
     daynow = datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d")
     embed.set_footer(text=f"Written with Python. Updated {daynow} {timenow}")
-    
+
     return embed
