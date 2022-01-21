@@ -117,10 +117,13 @@ def weatherembed():
         base_url = 'https://api.openweathermap.org/data/2.5/onecall?lat=43.523365520378476&lon=-79.66657897048847&exclude=&appid=c60c87b8057579c58bf1b21e7bbdf86b'
         response = requests.get(base_url)
         x = response.json()
-
-    current = x['current']
-    hourly = x['hourly']
-    currentmod = ''
+    
+    try:
+        current = x['current']
+        hourly = x['hourly']
+        currentmod = ''
+    except:
+        return "Banned"
 
     currentmod += f"Sunrise today : {findday(current['sunrise'])}"
     currentmod += f"\nSunset today : {findday(current['sunset'])}"

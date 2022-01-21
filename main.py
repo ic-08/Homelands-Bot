@@ -21,8 +21,10 @@ import json
 
 from os import system
 #Start up@
+intents = discord.Intents.default()
+intents.members = True
 activity = discord.Game(name="$help | $cmd for commands")
-bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online, help_command=None)
+bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online, help_command=None,intents=intents)
 bot.strip_after_prefix = True
 tme = time
 print(f"Repl Database keys in use : {db.keys()}")
@@ -52,7 +54,16 @@ def separate_str(string):
 Notice: Before each command, there SHOULD be a comment detailing the command and how to use it.
 For example:
 #test() is for testing. Ex: $test, $ttt
+@bot.command()
 '''
+
+@bot.command()
+async def test(ctx):
+    from random import choice
+    user = choice(ctx.guild.members)
+    await ctx.send(user)
+    await ctx.send(user.id)
+
 #_9ball is for 'determining the future' (not really). Ex: $_9ball <prompt>, $9ball <prompt>, $9 <prompt>
 @bot.command(aliases=['9ball', '9b'])
 async def _9ball(ctx,
@@ -572,6 +583,8 @@ async def restart(ctx):
 @bot.event
 async def on_ready():
 
+    asyncio.run()
+
     #Restart command finished ( Messages the user after restart command has completed)
     if db["restartctx"] != 0:
         cnl = db['restartctx']
@@ -600,8 +613,6 @@ async def on_ready():
     #Variables
     day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-    hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
-    x = datetime.now(pytz.timezone('US/Eastern')).weekday()
     channel = bot.get_channel(919281999427043369)
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
     holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18']
@@ -645,8 +656,10 @@ async def on_ready():
     #Weather API
     executiontime = tme.time() 
     try:
-        weatherembed()
-        des += f"\n\nWeather API and function passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
+        if weatherembed() == "Banned": #Rate limited
+            des += f"\n\nWeather API and function failed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
+        else:
+            des += f"\n\nWeather API and function passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
     except:
         des += '\n\nError in Weather API. Priority is medium - Inform the public about the temporary error'
     embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
@@ -715,216 +728,216 @@ async def on_ready():
 
 
     #For scheduling periods
+
     while True:
+
+        #The hour and the day of the week to determine the day and time
+        #Used to determine if it is a school day and also if it is a school
+        #period or hours if it is a school day.
+
+        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
+        x = datetime.now(pytz.timezone('US/Eastern')).weekday()
+
+        #Thread checking
+        if not t1.is_alive():
+            break
+
+        import asyncio
+        
+        #Import your subjects and periods
+        from subjects import dict705, dict805, dict605, sub
+        #CUrrent time
+        now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
         try:
+            os.remove(r'assets/temp/temp.png')
+        except:
+            pass
 
-            #Thread checking
-            if not t1.is_alive():
-                break
+        #VARIABLES
+        x = datetime.now(pytz.timezone('US/Eastern')).weekday()
+        day = int(db['day'])
+        
 
-            import asyncio
-            
-            #Import your subjects and periods
-            from subjects import dict705, dict805, dict605, sub
-            #CUrrent time
-            now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
+        def refresh():
+            print("Updated duedates")
+            #Try and except for tempoarary service errors for Google API
+            repeat = 0
+            while True:
+                if repeat > 2:
+                    break
+                try:
+                    #Refresh duedates
+                    dueembed = cng_due(main2(), main())
+                    return dueembed
+                except:
+                    repeat += 1
+                    pass
+        
+
+        #Update the weather embed every 4 minutes
+        if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
+            from bot_func import weatherembed
+            channel = bot.get_channel(922230146038132816)
+            message = await channel.fetch_message(922231492296445994)
             try:
-                os.remove(r'assets/temp/temp.png')
+                await message.edit(embed=weatherembed())
             except:
                 pass
 
-            #VARIABLES
-            x = datetime.now(pytz.timezone('US/Eastern')).weekday()
-            day = int(db['day'])
-            
+        #HOLIDAYS
+        if datetime.now(
+                pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
+            print("Holiday. Refresh in 2 minutes")
+            await message.edit(embed=refresh())
+            await asyncio.sleep(120)
 
-            def refresh():
-                print("Updated duedates")
-                #Try and except for tempoarary service errors for Google API
-                repeat = 0
-                while True:
-                    if repeat > 2:
-                        break
-                    try:
-                        #Refresh duedates
-                        dueembed = cng_due(main2(), main())
-                        return dueembed
-                    except:
-                        repeat += 1
-                        pass
-            
+        #WEEKEND
+        elif day_of_the_week[x] not in weekdays:
+            print("Weekend. Refresh in 1 minute")
+            await message.edit(embed=refresh())
+            await asyncio.sleep(60)
 
 
-            if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
-                from bot_func import weatherembed
-                channel = bot.get_channel(922230146038132816)
-                message = await channel.fetch_message(922231492296445994)
-                await message.edit(embed=weatherembed())
+
+        #SCHOOL DAY
+        
+        #School hours
         
 
+        elif hr >=6 and hr <= 14:
+            print("School hours")
 
-            #Duedate embed message
-            channel = bot.get_channel(887095059680477214)
-            message = await channel.fetch_message(914295454840258601)
+            #Scheduler Channel
+            channel = bot.get_channel(895778100854546493)
 
-            #HOLIDAYS
-            if datetime.now(
-                    pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
-                print("Holiday. Refresh in 2 minutes")
-                await message.edit(embed=refresh())
+            #Start of the day ( 8:30 )
+            if now_time == '08:30':
+                file = scheduler()
+                embed = discord.Embed(
+                    title="Start of school",
+                    description=
+                    f"It is now period 1. \n\n**605 has {dict605[str(day)]['1']}**\n\n**705 has {dict705[str(day)]['1']}**\n\n**805 has {dict805[str(day)]['1']}**\n"
+                )
+                embed.add_field(name="Day:", value=day)
+                embed.set_footer(text="Written with python")
+                file = discord.File("assets/temp/temp.png",
+                                    filename="temp.png")
+                embed.set_image(url="attachment://temp.png")
+                print("Sent period 1")
+                msg = await channel.send(file=file, embed=embed)
+                await msg.publish()
                 await asyncio.sleep(120)
 
-            #WEEKEND
-            elif day_of_the_week[x] not in weekdays:
-                print("Weekend. Refresh in 1 minute")
-                await message.edit(embed=refresh())
-                await asyncio.sleep(60)
+            #Lunchtime
+            elif now_time == '11:00':
+                file = scheduler()
+                embed = discord.Embed(title="Lunchtime",
+                                    description="Time for lunch! 😋")
+                embed.add_field(name="Day:", value=day)
+                embed.set_footer(text="Written with python")
+                file = discord.File("assets/temp/temp.png",
+                                    filename="temp.png")
+                embed.set_image(url="attachment://temp.png")
+                print("Sent lunch")
+                msg = await channel.send(file=file, embed=embed)
+                await msg.publish()
+                await asyncio.sleep(1800)  #Half an hour
 
+            #End of the day ( 2:30 )
+            elif now_time == '14:30':
+                file = scheduler()
+                embed = discord.Embed(title="End of school",
+                                    description="Have a nice day!")
+                embed.add_field(name="Day:", value=day)
+                embed.set_footer(text="Written with python")
+                file = discord.File("assets/temp/temp.png",
+                                    filename="temp.png")
+                embed.set_image(url="attachment://temp.png")
 
+                #Change the day
+                from bot_func import changeday
+                nday = changeday(day)
 
-            #SCHOOL DAY
-            
-            #School hours
-            elif hr >=6 or hr <= 14:
-                print("School hours")
+                msg = await channel.send(file=file, embed=embed)
+                await msg.publish()
 
-                #Scheduler Channel
-                channel = bot.get_channel(895778100854546493)
+                #Time
+                file = scheduler()
 
-                #Start of the day ( 8:30 )
-                if now_time == '08:30':
-                    file = scheduler()
-                    embed = discord.Embed(
-                        title="Start of school",
-                        description=
-                        f"It is now period 1. \n\n**605 has {dict605[str(day)]['1']}**\n\n**705 has {dict705[str(day)]['1']}**\n\n**805 has {dict805[str(day)]['1']}**\n"
-                    )
-                    embed.add_field(name="Day:", value=day)
-                    embed.set_footer(text="Written with python")
-                    file = discord.File("assets/temp/temp.png",
-                                        filename="temp.png")
-                    embed.set_image(url="attachment://temp.png")
-                    print("Sent period 1")
-                    msg = await channel.send(file=file, embed=embed)
-                    await msg.publish()
-                    await asyncio.sleep(120)
-
-                #Lunchtime
-                elif now_time == '11:00':
-                    file = scheduler()
-                    embed = discord.Embed(title="Lunchtime",
-                                        description="Time for lunch! 😋")
-                    embed.add_field(name="Day:", value=day)
-                    embed.set_footer(text="Written with python")
-                    file = discord.File("assets/temp/temp.png",
-                                        filename="temp.png")
-                    embed.set_image(url="attachment://temp.png")
-                    print("Sent lunch")
-                    msg = await channel.send(file=file, embed=embed)
-                    await msg.publish()
-                    await asyncio.sleep(1800)  #Half an hour
-
-                #End of the day ( 2:30 )
-                elif now_time == '14:30':
-                    file = scheduler()
-                    embed = discord.Embed(title="End of school",
-                                        description="Have a nice day!")
-                    embed.add_field(name="Day:", value=day)
-                    embed.set_footer(text="Written with python")
-                    file = discord.File("assets/temp/temp.png",
-                                        filename="temp.png")
-                    embed.set_image(url="attachment://temp.png")
-
-                    #Change the day
-                    from bot_func import changeday
-                    nday = changeday(day)
-
-                    msg = await channel.send(file=file, embed=embed)
-                    await msg.publish()
-
-                    #Time
-                    file = scheduler()
-
-                    #Prompt in the scheduling.
-                    if day_of_the_week[x] == "Friday":
-                        day_prompt = "Monday"
-                    else:
-                        day_prompt = "Tomorrow"
-
-                    #Send the schedule for tomorrow
-                    embed = discord.Embed(
-                        title=f"Good Afternoon!",
-                        description=
-                        f"{day_prompt}:\n\n605 has:\n {sub(nday,'605')}\n\n705 has:\n {sub(nday,'705')}\n\n805 has: \n {sub(nday,'805')}"
-                    )
-                    embed.add_field(name="Day:", value=nday)
-                    embed.set_footer(text="Written with python")
-                    file = discord.File("assets/temp/temp.png",
-                                        filename="temp.png")
-                    embed.set_image(url="attachment://temp.png")
-                    print("Sent the schdule for the next day")
-                    msg = await channel.send(file=file, embed=embed)
-                    await msg.publish()
-                    await asyncio.sleep(3800)
-
-                #School periods
-                elif now_time in periods:
-                    file = scheduler()
-                    index = periods.index(now_time)
-                    index += 2
-                    embed = discord.Embed(
-                        title=f"Period {index}",
-                        description=
-                        f"It is now period {index}. \n\n**605 has {dict605[str(day)][str(index)]}**\n\n**705 has {dict705[str(day)][str(index)]}**\n\n**805 has {dict805[str(day)][str(index)]}**"
-                    )
-                    embed.add_field(name="Day:", value=day)
-                    embed.set_footer(text="Written with python")
-                    file = discord.File("assets/temp/temp.png",filename="temp.png")
-                    embed.set_image(url="attachment://temp.png")
-                    print(f"Sent school period {index}")
-                    msg = await channel.send(file=file, embed=embed)
-                    await msg.publish()
-
-                    #Refresh the duedates every period
-                    cnl = bot.get_channel(887095059680477214)
-                    message = await cnl.fetch_message(914295454840258601)
-                    await message.edit(embed=refresh())
-                    
-
-                    await asyncio.sleep(120)
-                
-                #Non-event periods
+                #Prompt in the scheduling.
+                if day_of_the_week[x] == "Friday":
+                    day_prompt = "Monday"
                 else:
-                    cnl = bot.get_channel(887095059680477214)
-                    message = await cnl.fetch_message(914295454840258601)
-                    current_time = datetime.now(
-                        pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
-                    print("Not a vaild period. Checking in approx 5 seconds")
-                    print(f"Current time : {current_time}")
-                    if int(list(current_time)[4]) % 3 == 0:
-                        cnl = bot.get_channel(887095059680477214)
-                        message = await cnl.fetch_message(914295454840258601)
-                        await message.edit(embed=refresh())
-                    await asyncio.sleep(5)
-            
-            #Off school hours
-            else:
-                print("School day but off school hours")
+                    day_prompt = "Tomorrow"
+
+                #Send the schedule for tomorrow
+                embed = discord.Embed(
+                    title=f"Good Afternoon!",
+                    description=
+                    f"{day_prompt}:\n\n605 has:\n {sub(nday,'605')}\n\n705 has:\n {sub(nday,'705')}\n\n805 has: \n {sub(nday,'805')}"
+                )
+                embed.add_field(name="Day:", value=nday)
+                embed.set_footer(text="Written with python")
+                file = discord.File("assets/temp/temp.png",
+                                    filename="temp.png")
+                embed.set_image(url="attachment://temp.png")
+                print("Sent the schdule for the next day")
+                msg = await channel.send(file=file, embed=embed)
+                await msg.publish()
+                await asyncio.sleep(3800)
+
+                #Announce the person who is infected
+
+
+            #School periods
+            elif now_time in periods:
+                file = scheduler()
+                index = periods.index(now_time)
+                index += 2
+                embed = discord.Embed(
+                    title=f"Period {index}",
+                    description=
+                    f"It is now period {index}. \n\n**605 has {dict605[str(day)][str(index)]}**\n\n**705 has {dict705[str(day)][str(index)]}**\n\n**805 has {dict805[str(day)][str(index)]}**"
+                )
+                embed.add_field(name="Day:", value=day)
+                embed.set_footer(text="Written with python")
+                file = discord.File("assets/temp/temp.png",filename="temp.png")
+                embed.set_image(url="attachment://temp.png")
+                print(f"Sent school period {index}")
+                msg = await channel.send(file=file, embed=embed)
+                await msg.publish()
+
+                #Refresh the duedates every period
                 cnl = bot.get_channel(887095059680477214)
                 message = await cnl.fetch_message(914295454840258601)
                 await message.edit(embed=refresh())
-                await asyncio.sleep(180)
-            
-            erros = 0
+                
 
-        except:
-            erros +=1
-            if erros > 10:
-                try:
-                    sys.exit()
-                except:
-                    break
-            print("Connection error")
+                await asyncio.sleep(120)
+            
+            #Non-event periods
+            else:
+                cnl = bot.get_channel(887095059680477214)
+                message = await cnl.fetch_message(914295454840258601)
+                current_time = datetime.now(
+                    pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
+                print("Not a vaild period. Checking in approx 5 seconds")
+                print(f"Current time : {current_time}")
+                if int(list(current_time)[4]) % 3 == 0:
+                    cnl = bot.get_channel(887095059680477214)
+                    message = await cnl.fetch_message(914295454840258601)
+                    await message.edit(embed=refresh())
+                await asyncio.sleep(5)
+        
+        #Off school hours
+        else:
+            print("School day but off school hours")
+            cnl = bot.get_channel(887095059680477214)
+            message = await cnl.fetch_message(914295454840258601)
+            await message.edit(embed=refresh())
+            await asyncio.sleep(180)
+        
+        erros = 0
 
     #When while loop is exited because of error or thread down
     sys.exit()
