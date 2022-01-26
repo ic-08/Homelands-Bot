@@ -19,6 +19,7 @@ import json
 
 
 
+
 from os import system
 #Start up@
 intents = discord.Intents.default()
