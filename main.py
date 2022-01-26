@@ -583,7 +583,6 @@ async def restart(ctx):
 @bot.event
 async def on_ready():
 
-    asyncio.run()
 
     #Restart command finished ( Messages the user after restart command has completed)
     if db["restartctx"] != 0:
@@ -615,7 +614,7 @@ async def on_ready():
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     channel = bot.get_channel(919281999427043369)
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18']
+    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18','01:24']
 
 
 
@@ -937,7 +936,6 @@ async def on_ready():
             await message.edit(embed=refresh())
             await asyncio.sleep(180)
         
-        erros = 0
 
     #When while loop is exited because of error or thread down
     sys.exit()
