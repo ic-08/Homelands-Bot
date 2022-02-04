@@ -33,7 +33,7 @@ def keepalive2():
                 print("Bot offline")
                 print(f"Bot status : {x[0]['status']}")
                 db['offtime'] = tme.time()
-            if db['offtime'] != 0 and tme.time() - db['offtime'] > 30 and x[0]['status'] != 'ONLINE':
+            if db['offtime'] != 0 and tme.time() - db['offtime'] > 60 and x[0]['status'] != 'ONLINE':
                 print("Rebooting")
                 db['offtime'] = 0
                 break
