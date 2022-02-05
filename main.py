@@ -773,6 +773,7 @@ async def on_ready():
                     repeat += 1
                     pass
         
+        
 
         #Update the weather embed every 4 minutes
         if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
@@ -788,12 +789,16 @@ async def on_ready():
         if datetime.now(
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
             print("Holiday. Refresh in 2 minutes")
+            cnl = bot.get_channel(887095059680477214)
+            message = await cnl.fetch_message(914295454840258601)
             await message.edit(embed=refresh())
             await asyncio.sleep(120)
 
         #WEEKEND
         elif day_of_the_week[x] not in weekdays:
             print("Weekend. Refresh in 1 minute")
+            cnl = bot.get_channel(887095059680477214)
+            message = await cnl.fetch_message(914295454840258601)
             await message.edit(embed=refresh())
             await asyncio.sleep(60)
 
@@ -917,15 +922,11 @@ async def on_ready():
             
             #Non-event periods
             else:
-                cnl = bot.get_channel(887095059680477214)
-                message = await cnl.fetch_message(914295454840258601)
                 current_time = datetime.now(
                     pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
                 print("Not a vaild period. Checking in approx 5 seconds")
                 print(f"Current time : {current_time}")
                 if int(list(current_time)[4]) % 3 == 0:
-                    cnl = bot.get_channel(887095059680477214)
-                    message = await cnl.fetch_message(914295454840258601)
                     await message.edit(embed=refresh())
                 await asyncio.sleep(5)
         
@@ -938,39 +939,34 @@ async def on_ready():
             await asyncio.sleep(180)
         
 
+
     #When while loop is exited because of error or thread down
     sys.exit()
 
 
 
-from startup import run,keepalive2
-t = Thread(target=run)
-t.daemon = True
-t.start()
 
-t1 = Thread(target=keepalive2)
-t1.daemon = True
-t1.start()
+if __name__ == "__main__":
 
-while True:
-    bot.run(os.environ['discordtoken'],reconnect=True)
+    from startup import run,keepalive2
+    t = Thread(target=run)
+    t.daemon = True
+    t.start()
 
-sys.exit()
-t.join()
-sys.exit()
-t1.join()
-sys.exit()
+    t1 = Thread(target=keepalive2)
+    t1.daemon = True
+    t1.start()
+
+    while True:
+        bot.run(os.environ['discordtoken'],reconnect=True)
 
 
-
+    t.join()
+    t1.join()
 
 
 
-#Commentary and Information
 
-#Use this to set up a new token
-#file = open('duedate/danieltoken.json', 'r')
-#db["token2"] = file.read()
-#file.close()
-#file = open('duedate/danieltoken.json', 'w')
-#file.close()
+
+
+

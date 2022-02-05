@@ -109,11 +109,14 @@ def main():
                     
             except KeyError:
                 pass 
+        if not due:
+            due.append("Woohoo, no work due soon")
         return due      
         
 def main2():
 
     classes705 = [
+        'The Learning Strikes Back',
         '705 Music',
         '705 PE',
         '705 - Cobo- tech',
@@ -195,9 +198,15 @@ def main2():
                     
             except KeyError:
                 pass 
-                
+        
+        #No work?!?!?
+        
+        if not due:
+            due.append("Woohoo, no work due soon")
         return due      
         
-
+if __name__ == '__main__':
+    main()
+    main2()
 #def homework(year,month,day):
 
