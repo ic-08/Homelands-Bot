@@ -17,6 +17,7 @@ from threading import Thread
 import json
 
 
+db["day"] = 1
 
 
 
@@ -26,6 +27,7 @@ intents = discord.Intents.default()
 intents.members = True
 activity = discord.Game(name="$help | $cmd for commands")
 bot = commands.Bot(command_prefix="$",activity=activity,status=discord.Status.online, help_command=None,intents=intents)
+bot.help_command = None
 bot.strip_after_prefix = True
 tme = time
 print(f"Repl Database keys in use : {db.keys()}")
@@ -62,6 +64,7 @@ For example:
 async def test(ctx):
     from random import choice
     user = choice(ctx.guild.members)
+    
     await ctx.send(user)
     await ctx.send(user.id)
 
@@ -191,7 +194,7 @@ async def help(ctx):
     embd = discord.Embed(
         title='Homelands Bot Help',
         description=
-        "**Hi! Welcome to the Homelands Bot Help Manual**\nI am proud to be part of the Homeland's community!I can currently do a few things, altough by the start of school, I will be providing support, such as reminders, fun games, homework support, and more!\n Have fun and **GO HOMELANDS**!",
+        "**Hi! Welcome to the Homelands Bot Help Manual**\nI am proud to be part of the Homeland's community!I can currently do a few things, altough you can check my current commands by typing `$help`. Homelands bot aims to provide support, such as reminders, fun games, homework support, and more!\n Have fun and **GO HOMELANDS**!",
         color=discord.Color.blue())
 
     embd.set_footer(text="Written with Python.")
@@ -584,6 +587,12 @@ async def restart(ctx):
 @bot.event
 async def on_ready():
 
+    bot.self_bot = False
+
+    channel = bot.get_channel(919281999427043369)
+
+    await channel.send("$test")
+
 
     #Restart command finished ( Messages the user after restart command has completed)
     if db["restartctx"] != 0:
@@ -631,8 +640,6 @@ async def on_ready():
     embd = discord.Embed(title = "Connected", description = "Checking for errors...",  color=discord.Color.red())
     embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
     msg = await channel.send(embed=embd)
-    bot.remove_command("help")
-    #bot.add_command(bot_help)
 
 
 
@@ -721,8 +728,6 @@ async def on_ready():
 
     print('Logged on')
     db["error"] = False
-    erros = 0
-
 
 
 
