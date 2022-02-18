@@ -17,9 +17,6 @@ from threading import Thread
 import json
 
 
-db["day"] = 1
-
-
 
 from os import system
 #Start up@
@@ -62,16 +59,17 @@ For example:
 
 @bot.command()
 async def test(ctx):
-    from random import choice
-    user = choice(ctx.guild.members)
-    
-    await ctx.send(user)
-    await ctx.send(user.id)
+    for item in bot.users:
+        if not item.bot:
+            print(item.id)
+            await ctx.send(item.id)
+            await ctx.send(item)
 
 #_9ball is for 'determining the future' (not really). Ex: $_9ball <prompt>, $9ball <prompt>, $9 <prompt>
+
+
 @bot.command(aliases=['9ball', '9b'])
-async def _9ball(ctx,
-                 *args):  #unfortunally, async def 8ball(): returned an error
+async def _9ball(ctx,*args):  #unfortunally, async def 8ball(): returned an error
     #list of predictions to (randomly) choose from
     predictions = [
         "Don't count on it.", 'My reply is no.',
@@ -86,9 +84,10 @@ async def _9ball(ctx,
     await ctx.send(msg)
 
 #_8ball is for 'determining the future' (not really). Ex: $_8ball <prompt>, $8ball <prompt>, $8b <prompt>
+
+
 @bot.command(aliases=['8ball', '8b'])
-async def _8ball(ctx,
-                 *args):  #unfortunally, async def 8ball(): returned an error
+async def _8ball(ctx,*args):  #unfortunally, async def 8ball(): returned an error
     #list of predictions to (randomly) choose from
     predictions = [
         'It is certain.', 'It is decidedly so.', 'Without a doubt.',
@@ -108,6 +107,8 @@ async def _8ball(ctx,
     await ctx.send(msg)
 
 #_7ball is for 'determining the future' (not really). Ex: $_7ball <prompt>, $7ball <prompt>, $7b ( Jeopardised version of 8 ball) <prompt>
+
+
 @bot.command(aliases=['7ball', '7b'])
 async def _7ball(ctx,*args):  #unfortunally, async def 7ball(): returned an error
     #list of predictions to (randomly) choose from
@@ -125,6 +126,8 @@ async def _7ball(ctx,*args):  #unfortunally, async def 7ball(): returned an erro
     await ctx.send(msg)
     
 #avatar is to show your's, or someone else's avatar. Ex: $avatar, $avatar @mention, $avatar {id}
+
+
 @bot.command(aliases=['av'])
 async def avatar(ctx, *, avamember: discord.Member = None):
     if avamember == None:
@@ -138,6 +141,8 @@ async def avatar(ctx, *, avamember: discord.Member = None):
 
 
 #calc() is for calculator
+
+
 @bot.command()
 async def calc(ctx, *args):
     equation = ''
@@ -152,6 +157,25 @@ async def calc(ctx, *args):
 
 
 #cmd() is for getting a list of cmds. For now it is a list, aiming to build a list like Dank Memer
+
+
+@bot.command(aliases=['time'])
+async def clock(ctx):
+    file = scheduler()
+
+    embed = discord.Embed(title="Time", color=0x808080)
+    embed.set_footer(text="Written with python")
+    file = discord.File("assets/temp/temp.png", filename="temp.png")
+    embed.set_image(url="attachment://temp.png")
+    await ctx.reply(file=file, embed=embed, mention_author=False)
+    import os
+    os.remove(f'assets/temp/temp.png')
+
+#report() is for reporting users : Ex: $report Someone deleted the report commands
+
+
+
+
 @bot.command(aliases=['command', 'cmds', 'commands', 'com'])
 async def cmd(ctx, *args):
     if str(args) != '()':
@@ -172,6 +196,8 @@ async def cmd(ctx, *args):
 
 
 #credits is to show credits. Ex: $credits
+
+
 @bot.command(aliases=['credit', 'contributors', 'developers', 'dev', 'devs'])
 async def credits(ctx):
     embd = discord.Embed(title="CREDITS", color=discord.Color.teal())
@@ -189,6 +215,8 @@ async def credits(ctx):
 
 
 #help() is for asking for help. Ex: $help
+
+
 @bot.command(aliases=['Help', 'bothelp'])
 async def help(ctx):
     embd = discord.Embed(
@@ -221,6 +249,8 @@ async def help(ctx):
 
 
 #hi() is for saying hello. Ex: $hi, $hello
+
+
 @bot.command(aliases=[
     'hello', 'hi!', 'hello!', 'hi there', 'Hi there', 'Hi there!', 'Howdy!',
     'howdy!', 'Hello', 'Hello!', 'Hi!', 'Hi'
@@ -233,6 +263,46 @@ async def hi(ctx):
 
 
 #server() is for server details. Ex: $server
+
+
+@bot.command()
+async def infect(ctx, *args):
+    if db["infected"] == int(ctx.message.author.id):
+        try:
+            finlist = int(args[0])
+        except:
+            userid =list(args[0])
+            x = 0
+            finlist = ''
+            for item in userid:
+                if x < 4 or x == len(userid) -1:
+                    pass
+                else:
+                    finlist += str(item)
+
+            finlist = int(finlist)
+
+        db["infected"] =int(finlist)
+        channel = bot.get_channel(919281999427043369)
+        infectedembed = discord.Embed(title = "Infection", description = f"The infection has been passed on to '<@!{int(finlist)}>")
+        await channel.send(embed=infectedembed)
+        
+        user = await bot.fetch_user(int(finlist))
+        embd = discord.Embed(title = "You have been infected!",description = "Pass on the infection to someone else by typing `$infect {user id}` in an channel in the ELC server. Doing so will also remove the infection from you.\n\nIf you don't know how to get user id:\n\n1.Go to user settings\n2.Click on Advanced\n3.Turn on developer mode\n4.Press the Esc key\n5.Right click a user in the member list on the side and click Copy ID")
+        await user.send(embed=embd)
+        await ctx.message.delete()
+    else:
+        await ctx.send("You are not infected!")
+        await ctx.message.delete()
+
+
+
+
+
+
+
+
+
 @bot.command()
 async def server(ctx, *args):
     if len(args) == 0:
@@ -367,19 +437,8 @@ async def server(ctx, *args):
 
 
 #server() is for finding the time. Ex: $time, $clock
-@bot.command(aliases=['time'])
-async def clock(ctx):
-    file = scheduler()
 
-    embed = discord.Embed(title="Time", color=0x808080)
-    embed.set_footer(text="Written with python")
-    file = discord.File("assets/temp/temp.png", filename="temp.png")
-    embed.set_image(url="attachment://temp.png")
-    await ctx.reply(file=file, embed=embed, mention_author=False)
-    import os
-    os.remove(f'assets/temp/temp.png')
 
-#report() is for reporting users : Ex: $report Someone deleted the report commands
 @bot.command()
 async def report(ctx,*args):
     channel = bot.get_channel(846813361177755648)
@@ -390,6 +449,8 @@ async def report(ctx,*args):
     await ctx.send(f"{ctx.author.mention}, your request has been received. The admins will look over your case.\nKeep in mind : For the best response time, include the perpetrator, reason for report, and message link if valid to make your requests quicker")
 
 #ping() is for people who want to ping the bot
+
+
 @bot.command()
 async def ping(ctx):
     start = tme.time()
@@ -402,6 +463,8 @@ async def ping(ctx):
 
 
 #rev() is for reversing a sentence. Ex: $rev <arg>
+
+
 @bot.command()
 async def rev(ctx, *args):
     s = ''
@@ -440,6 +503,10 @@ async def rev(ctx, *args):
 
 
 #poll() is for creating a  poll. Ex: $poll <arg>
+
+
+
+
 @bot.command()
 async def poll(ctx, *args):
     if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
@@ -455,6 +522,8 @@ async def poll(ctx, *args):
 
 
 #uniquepoll() is for creating polls with special emojis. Ex: $poll <arg> 
+
+
 @bot.command()
 async def uniquepoll(ctx, *args):
     if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
@@ -479,33 +548,6 @@ async def uniquepoll(ctx, *args):
         )
 
 #Infection game
-@bot.command()
-async def infect(ctx, *args):
-    if db["infected"] == int(ctx.message.author.id):
-        try:
-            finlist = int(args[0])
-        except:
-            userid =list(args[0])
-            x = 0
-            finlist = ''
-            for item in userid:
-                if x < 4 or x == len(userid) -1:
-                    pass
-                else:
-                    finlist += str(item)
-
-            finlist = int(finlist)
-
-        db["infected"] =int(finlist)
-        channel = bot.get_channel(919281999427043369)
-        await channel.send(f'<@!{int(finlist)}> is infected') 
-        user = await bot.fetch_user(int(finlist))
-        embd = discord.Embed(title = "You have been infected!",description = "Pass on the infection to someone else by typing `$infect {user id}` in an channel in the ELC server. Doing so will also remove the infection from you.\n\nIf you don't know how to get user id:\n\n1.Go to user settings\n2.Click on Advanced\n3.Turn on developer mode\n4.Press the Esc key\n5.Right click a user in the member list on the side and click Copy ID")
-        await user.send(embed=embd)
-        await ctx.message.delete()
-    else:
-        await ctx.send("You are not infected!")
-        await ctx.message.delete()
 
 
 @bot.command()
@@ -540,6 +582,8 @@ async def post(ctx, *args):
     await ctx.message.delete()
 
 #its not here
+
+
 @bot.command(aliases=["changeday"])
 async def setday(ctx, *args):
     if ctx.channel.id in modlist_channels:
@@ -559,10 +603,16 @@ async def setday(ctx, *args):
 
 
 
+
+
 @bot.command()
 async def addrole(ctx, member: discord.Member, role: discord.Role):
     if ctx.channel.id in modlist_channels:
         await member.add_roles(role)
+
+
+
+
 
 @bot.command()
 async def react(ctx,*args):
@@ -570,6 +620,10 @@ async def react(ctx,*args):
     msg = await channel.fetch_message(str(args[0]))
     await msg.add_reaction("✅")
     await ctx.message.delete()                                          
+
+
+
+
 
 @bot.command(aliases=['reboot','refresh'])
 async def restart(ctx):
@@ -584,24 +638,37 @@ async def restart(ctx):
 
 
 ###################Start
+
+
 @bot.event
 async def on_ready():
 
-    bot.self_bot = False
-
-    channel = bot.get_channel(919281999427043369)
-
-    await channel.send("$test")
-
 
     #Restart command finished ( Messages the user after restart command has completed)
-    if db["restartctx"] != 0:
-        cnl = db['restartctx']
-        cnl = cnl.split()
-        channel = bot.get_channel(int(cnl[0]))
-        embd = discord.Embed(title = "Connected", description = f"Restart finished.\nExecuted in {tme.time() - float(cnl[1])}",  color=discord.Color.green())
-        await channel.send(embed=embd)
-        db["restartctx"] = 0
+    restartvalue = db['restartctx']
+    if restartvalue != 0:
+        if restartvalue == "reboot":
+            import random
+            from random import choice
+            randomuser = choice(bot.users)
+
+            channel = bot.get_channel(839135669712060490)
+            await channel.send(f"<@!{int(db['infected'])}> was infected at the end of the day. The disease has moved on to someone else...")
+
+            db['infected'] = int(randomuser.id)
+
+            user = await bot.fetch_user(int(db['infected']))
+
+            embd = discord.Embed(title = "You have been infected with Work2MuchVirus!",description = "Pass on the infection to someone else by typing `$infect {user id}` in an channel in the ELC server. Doing so will also remove the infection from you.\n\nIf you don't know how to get user id:\n\n1.Go to user settings\n2.Click on Advanced\n3.Turn on developer mode\n4.Press the Esc key\n5.Right click a user in the member list on the side and click Copy ID")
+            await user.send(embed=embd)
+            db["restartctx"] = 0
+        else:
+            cnl = db['restartctx']
+            cnl = cnl.split()
+            channel = bot.get_channel(int(cnl[0]))
+            embd = discord.Embed(title = "Connected", description = f"Restart finished.\nExecuted in {tme.time() - float(cnl[1])}",  color=discord.Color.green())
+            await channel.send(embed=embd)
+            db["restartctx"] = 0
     
 
 
@@ -624,7 +691,7 @@ async def on_ready():
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     channel = bot.get_channel(919281999427043369)
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18','01:24']
+    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18','01:24','02:18']
 
 
 
@@ -687,6 +754,8 @@ async def on_ready():
     embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
     await msg.edit(embed=embd)
 
+
+    
     #Error rebooting
     if reboot == True and db["error"] == False:
         channel = bot.get_channel(919281999427043369)
@@ -702,6 +771,7 @@ async def on_ready():
 
     ###ERROR CHECKING### ( Above )
 
+        
 
     #CONNECTED MESSAGE#
     if reboot == True:
@@ -728,9 +798,6 @@ async def on_ready():
 
     print('Logged on')
     db["error"] = False
-
-
-
 
     #For scheduling periods
 
@@ -815,7 +882,6 @@ async def on_ready():
         
 
         elif hr >=6 and hr <= 14:
-            print("School hours")
 
             #Scheduler Channel
             channel = bot.get_channel(895778100854546493)
@@ -927,11 +993,10 @@ async def on_ready():
             
             #Non-event periods
             else:
-                current_time = datetime.now(
-                    pytz.timezone('US/Eastern')).strftime("%H:%M:%S")
-                print("Not a vaild period. Checking in approx 5 seconds")
-                print(f"Current time : {current_time}")
-                if int(list(current_time)[4]) % 3 == 0:
+                print("Not a vaild period")
+                if int(list(datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M:%S"))[4]) % 3 == 0:
+                    cnl = bot.get_channel(887095059680477214)
+                    message = await cnl.fetch_message(914295454840258601)
                     await message.edit(embed=refresh())
                 await asyncio.sleep(5)
         
@@ -953,7 +1018,36 @@ async def on_ready():
 
 if __name__ == "__main__":
 
+
+    #Stop Thread Class
+    import threading
+    
+    class StopThread(StopIteration): pass
+    threading.SystemExit = SystemExit, StopThread
+    
+    class stopthread(threading.Thread):
+        def stop(self):
+            self.__stop = True
+    
+        def _bootstrap(self):
+            if threading._trace_hook is not None:
+                raise ValueError('Cannot run thread with tracing!')
+            self.__stop = False
+            sys.settrace(self.__trace)
+            super()._bootstrap()
+    
+        def __trace(self, frame, event, arg):
+            if self.__stop:
+                raise StopThread()
+            return self.__trace
+
+    #Start
+
     from startup import run,keepalive2
+    
+    def main():
+        bot.run(os.environ['discordtoken'],reconnect=True)
+            
     t = Thread(target=run)
     t.daemon = True
     t.start()
@@ -962,13 +1056,12 @@ if __name__ == "__main__":
     t1.daemon = True
     t1.start()
 
-    while True:
-        bot.run(os.environ['discordtoken'],reconnect=True)
+    t2 = stopthread(target=main)
+    t2.run()
 
-
-    t.join()
-    t1.join()
-
+    os.system('CLS')
+    
+    sys.exit()
 
 
 
