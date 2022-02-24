@@ -572,13 +572,26 @@ modlist_channels = [
 
 #post() is for posting. Ex: $post <arg>
 @bot.command()
-async def post(ctx, *args):
+async def post(self , ctx, *args):
     message = ''
     num = 0
     for item in args:
         message += str(args[num]) + " "
         num += 1
-    message = await ctx.send(message)
+    
+    await ctx.send("Ping role (Type id). Or type something random or 'None' to ping no roles")
+    
+    response = await self.bot.wait_for('message', check=check)
+    
+    if response.content.lower() == 'none':
+        message = await ctx.send(message)
+    else:
+        try:
+            message = await ctx.send(f"<&@{int(response.content)}>{message}")
+        except:
+            message = await ctx.send(message)
+        
+        # actions which should happen if the person responded with 'no' or something els
     await ctx.message.delete()
 
 #its not here
@@ -647,13 +660,15 @@ async def on_ready():
     #Restart command finished ( Messages the user after restart command has completed)
     restartvalue = db['restartctx']
     if restartvalue != 0:
+
+        #Infection game
         if restartvalue == "reboot":
             import random
             from random import choice
             randomuser = choice(bot.users)
 
             channel = bot.get_channel(839135669712060490)
-            await channel.send(f"<@!{int(db['infected'])}> was infected at the end of the day. The disease has moved on to someone else...")
+            await channel.send(f"<@!{int(db['infected'])}> was infected at the end of the week. The disease has moved on to someone else...")
 
             db['infected'] = int(randomuser.id)
 
@@ -691,113 +706,38 @@ async def on_ready():
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     channel = bot.get_channel(919281999427043369)
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18','01:24','02:18']
+    holidays = ['10:11', "11:12",'12:20','12:21','12:22','12:23','12:24','12:25','12:26','12:27','12:28','12:29','12:30','12:31','01:03','01:04','01:17','01:18','01:24','02:18',"02:21"]
 
-
-
-    #Error check if it isn't during school times
-
-    ###ERROR CHECKING###
-    infoping = ''  
-    des = ''
-    reboot = False
-
-    #Embed
-    channel = bot.get_channel(919281999427043369)
-    embd = discord.Embed(title = "Connected", description = "Checking for errors...",  color=discord.Color.red())
-    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-    msg = await channel.send(embed=embd)
-
-
-
-    #HTTP Requests
-    executiontime = tme.time() 
     try:
         start = tme.time()
         r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
         infoping = f"{(tme.time() - start)*1000} ms"
-        des = f"Checking for errors...\n\nPinging passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
-        errormsg = "No"
+        des = ''
     except:
         des = 'Error in pinging bot. Priority is low '
-        errormsg = "An"
-    
-    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-    await msg.edit(embed=embd)
-    
-
-    #Weather API
-    executiontime = tme.time() 
-    try:
-        if weatherembed() == "Banned": #Rate limited
-            des += f"\n\nWeather API and function failed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
-        else:
-            des += f"\n\nWeather API and function passed ...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
-    except:
-        des += '\n\nError in Weather API. Priority is medium - Inform the public about the temporary error'
-    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-    await msg.edit(embed=embd)
-
-
-    #PIL Library
-    executiontime = tme.time() 
-    try:
-        file= scheduler()
-        des += f"\n\nPIL Library and scheduler function passed...\nExecution time : {'{:.18f}'.format(tme.time() - executiontime)} seconds"
-    except:
-        reboot = True
-        des = 'Error in PIL Library and generating time image. Priority is high during school times'
-    
-    embd = discord.Embed(title = "Connected", description = des,  color=discord.Color.red())
-    embd.set_image(url = 'https://cdn.discordapp.com/attachments/919281999427043369/920113239809994792/download.jpg')
-    await msg.edit(embed=embd)
-
-
-    
-    #Error rebooting
-    if reboot == True and db["error"] == False:
-        channel = bot.get_channel(919281999427043369)
-        await channel.send("<@&879470018809692170> Error in bot. Reboot pending...")
-        print("Error in bot. Reboot pending...")
-        db["error"] = True
-        system("busybox reboot")
-    
-    #Error bypass ( Due to reboot failure )
-    if db['error'] == True and reboot == True:
-        channel = bot.get_channel(919281999427043369)
-        await channel.send("<@&879470018809692170> Error in bot. Reboot has completed, but the bot still has errors. Running anyways...")
-
-    ###ERROR CHECKING### ( Above )
-
-        
 
     #CONNECTED MESSAGE#
-    if reboot == True:
-        pass
-    else:
-        clock = datetime.now(
-            pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
-        embed = discord.Embed(title='Homelands Bot is Online',
-                            description=f"Logged on as {bot.user} as of {clock}",
-                            color=discord.Color.green())
-        
-        r= requests.get('https://Pinging-bot.isaacchu1.repl.co/status', timeout=10)
-        r = r.json()
-        r = r[0]['status']
+    file = scheduler()
+    clock = datetime.now(
+        pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
+    embed = discord.Embed(title='Homelands Bot is Online',
+                        description=f"Logged on as {bot.user} as of {clock}",
+                        color=discord.Color.green())
+    
+    r= requests.get('https://Pinging-bot.isaacchu1.repl.co/status', timeout=10)
+    r = r.json()
+    r = r[0]['status']
 
-        embed.add_field(
-            name="Information",
-            value=
-            f"Day = {db['day']}\n\n<@!{int(db['infected'])}> is infected\n\n{errormsg} error present pinging 'https://Pinging-bot.isaacchu1.repl.co'.\n\nBot is : {r}\nResponse time : {infoping}\n\nPIL Library and time generator check...\n"
-        )
-        embed.set_footer(text="Written with python")
-        embed.set_image(url="attachment://temp.png")
-        await channel.send(file=file, embed=embed)
+    embed.add_field(
+        name="Information",
+        value=
+        f"Day = {db['day']}\n\n<@!{int(db['infected'])}> is infected\n\nBot is : {r}\nResponse time : {infoping}\n{des}\n\nPIL Library and time generator check...\n"
+    )
+    embed.set_footer(text="Written with python")
+    embed.set_image(url="attachment://temp.png")
+    await channel.send(file=file, embed=embed)
 
     print('Logged on')
-    db["error"] = False
 
     #For scheduling periods
 
@@ -806,9 +746,6 @@ async def on_ready():
         #The hour and the day of the week to determine the day and time
         #Used to determine if it is a school day and also if it is a school
         #period or hours if it is a school day.
-
-        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
-        x = datetime.now(pytz.timezone('US/Eastern')).weekday()
 
         #Thread checking
         if not t1.is_alive():
@@ -826,6 +763,7 @@ async def on_ready():
             pass
 
         #VARIABLES
+        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
         day = int(db['day'])
         

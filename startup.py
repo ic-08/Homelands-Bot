@@ -50,7 +50,9 @@ def keepalive2():
         if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H")) == 1:
             day = datetime.now(pytz.timezone('US/Eastern')).strftime("%B %d ,%Y")
             print(f"Today is {day}") 
-            db['restartctx'] = "reboot"
+            if datetime.now(pytz.timezone('US/Eastern')).weekday() == 0:
+                db['restartctx'] = "reboot"
+                
             tme.sleep(3600)
             break
 
