@@ -194,4 +194,5 @@ def weatherembed():
     daynow = datetime.now(pytz.timezone('US/Eastern')).strftime("%Y-%m-%d")
     embed.set_footer(text=f"Written with Python. Updated {daynow} {timenow}")
 
+    print("Updated weather")
     return embed

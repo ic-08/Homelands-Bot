@@ -63,8 +63,7 @@ def keepalive2():
         iteration += 1
         tme.sleep(10)
 
-    from main import t
-    t.stop()
+    sys.exit()
 
 
 

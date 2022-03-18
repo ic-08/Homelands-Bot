@@ -16,6 +16,7 @@ python-dotenv = "^0.19.2"
 replit = "^3.2.4"
 Events = "^0.4"
 day = "^0.0.1"
+pypresence = "^4.2.1"
 
 [tool.poetry.dev-dependencies]
 
