@@ -704,36 +704,35 @@ async def on_ready():
     
 @tasks.loop(seconds=60) 
 async def background_task():
+
+    #Bot status
+    from startup import bot_status
+    bot_status = bot_status()
+    if bot_status == 'restart':
+        sys.exit()
+
     
     #Variables
     from bot_func import cng_due
     from googleapi import main,main2
     from scheduler import scheduler
-    
+    from subjects import dict705, dict805, dict605, sub
     day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
     weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
     channel = bot.get_channel(919281999427043369)
     periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
     holidays = ['03:15','03:16','03:17','03:18','03:19','03:20']
-
-    if not t1.is_alive():
-        sys.exit()
-    
-    #Import your subjects and periods
-    from subjects import dict705, dict805, dict605, sub
-    #CUrrent time
     now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
+    hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
+    x = datetime.now(pytz.timezone('US/Eastern')).weekday()
+    day = int(db['day'])
+
+    
     try:
         os.remove(r'assets/temp/temp.png')
     except:
         pass
-
-    #VARIABLES
-    hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
-    x = datetime.now(pytz.timezone('US/Eastern')).weekday()
-    day = int(db['day'])
     
-
     def refresh():
         print("Updated duedates")
         #Try and except for tempoarary service errors for Google API
@@ -751,7 +750,13 @@ async def background_task():
     
     
 
-    #Update the weather embed every 4 minutes
+    #Update the weather and duedate embed every 4 and 1 minute(s)
+    cnl = bot.get_channel(887095059680477214)
+    message = await cnl.fetch_message(914295454840258601)
+    try:
+        await message.edit(embed=refresh())
+    except:
+        pass
     if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
         from bot_func import weatherembed
         channel = bot.get_channel(922230146038132816)
@@ -761,32 +766,18 @@ async def background_task():
         except:
             pass
 
-    #Update the duedate embed every minutes
-    try:
-        cnl = bot.get_channel(887095059680477214)
-        message = await cnl.fetch_message(914295454840258601)
-        await message.edit(embed=refresh())
-    except:
-        pass
 
-    #HOLIDAYS
+    #Scheduling for school
+        
+    #Non-school days
     if datetime.now(
-            pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays:
+            pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays or day_of_the_week[x] not in weekdays:
         print("Holiday. Refresh in a minute")
         pass
 
-    #WEEKEND
-    elif day_of_the_week[x] not in weekdays:
-        print("Weekend. Refresh in a minute")
-        pass
-
-
-
-    #SCHOOL DAY
-    
+    #School days
+                
     #School hours
-    
-
     elif hr >=6 and hr <= 14:
         while hr != 15:
     
@@ -903,23 +894,13 @@ async def background_task():
 
 
 if __name__ == "__main__":
-    #Stop Thread Class
-    from threading import Thread
 
     #Start
-
-    from startup import run,keepalive2
-
-    
-            
+    from startup import run
     t = Thread(target=run)
     t.daemon = True
     t.start()
-
-    t1 = Thread(target=keepalive2)
-    t1.daemon = True
-    t1.start()
-
+    
     bot.run(os.environ['discordtoken'],reconnect=True)
     
     sys.exit()
