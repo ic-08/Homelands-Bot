@@ -1,9 +1,6 @@
-import threading
-from threading import Thread
 from datetime import *
 import discord
 import random
-from discord.ext import commands
 
 
 
@@ -11,7 +8,6 @@ def scheduler():
     import os
     from PIL import Image, ImageDraw, ImageFont
     import pytz
-    import time
     #Open the background
     pics = os.listdir('assets/backgrounds')
     picture = random.choice(pics)

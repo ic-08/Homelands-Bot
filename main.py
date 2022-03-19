@@ -765,7 +765,7 @@ async def background_task():
             await message.edit(embed=weatherembed())
         except:
             pass
-
+    
 
     #Scheduling for school
         

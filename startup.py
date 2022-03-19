@@ -54,10 +54,12 @@ def bot_status():
         tme.sleep(3600)
         return "restart"
 
-
-    print(f"\n\n\n\nAlive as of {nowtime}")
-    print(f"Bot status : {str(x[0]['status'])}\n")
-
+    try:
+        print(f"\n\n\n\nAlive as of {nowtime}")
+        print(f"Bot status : {str(x[0]['status'])}\n")
+    except:
+        pass
+        
     return
 
 
