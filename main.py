@@ -668,12 +668,6 @@ async def restart(ctx):
 
 
 
-
-###################Start
-
-
-
-
 @bot.event
 async def on_ready():
 
@@ -730,8 +724,10 @@ async def on_ready():
 
 @tasks.loop(seconds=5)
 async def scheduling():
-    global idling_time
+
     
+    global idling_time
+    global time_status
     if idling_time != 0:
         idling_time -= 5
     else:
@@ -748,11 +744,17 @@ async def scheduling():
         hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
         day = int(db['day'])
+
+        
+        try:
+            os.remove(r'assets/temp/temp.png')
+        except:
+            pass
         
         #Non-school days
         if datetime.now(
                 pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays or day_of_the_week[x] not in weekdays:
-            print("Holiday. Refresh in a minute.")
+            time_status = "Holiday. Refresh in a minute."
             idling_time = 60
     
         #School days
@@ -856,6 +858,11 @@ async def scheduling():
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
                 idling_time = 1500
+            else:
+                time_status = "School hours"
+        else:
+            time_status = "School day but off school hours"
+            idling_time = 60
 
 
 @tasks.loop(seconds=60) 
@@ -865,19 +872,17 @@ async def background_task():
     if timeupdate() == 'restart':
         sys.exit()
     global x
-    print(f"Bot status : {x[0]['status']}\n")
-
+    global time_status
+    try:
+        print(f"Bot status : {x[0]['status']}\n")
+        print(time_status)
+    except:
+        pass
     
     #Variables
     from bot_func import cng_due
     from googleapi import main,main2
     from bot_func import weatherembed
-
-    
-    try:
-        os.remove(r'assets/temp/temp.png')
-    except:
-        pass
     
     def refresh():
         print("Updated duedates")
