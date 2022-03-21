@@ -25,8 +25,28 @@ bot.help_command = None
 bot.strip_after_prefix = True
 tme = time
 print(f"Repl Database keys in use : {db.keys()}")
+for key in db.keys():
+    print(f"{key} : {db[str(key)]}")
+          
 #bot.remove_command('help')
 
+#Bot status check
+async def b_status():
+    global x
+    while True:
+        try:
+            r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
+            x = r.json()
+            if x[0]['status'] != 'ONLINE':
+                print("Bot offline")
+                print("Rebooting") 
+                print(f"Bot status : {x[0]['status']}")
+                await bot.close()
+                sys.exit()
+            else:
+                await asyncio.sleep(5)
+        except:
+            pass
 
 ## BELOW USED FOR BOT ##
 def separate_str(string):
@@ -450,13 +470,12 @@ async def report(ctx,*args):
 
 @bot.command()
 async def ping(ctx):
-    start = tme.time()
-    r= requests.head('https://Pinging-bot.isaacchu1.repl.co', timeout=10)
-    infoping = f"{(tme.time() - start)*1000} ms"
-
-    embed = discord.Embed(title="Pong!", description = f"Response time : {infoping}\nPing status : {r}")
+    start_time = time.time()
+    await ctx.send("** **")
+    embed = discord.Embed(title="Pong!", description = f"Response time : \n\nLatency :{bot.latency * 1000} ms\nDiscord API :{time.time() - start_time * 1000} ms")
     embed.set_footer(text="Written with python")
-    await ctx.reply(embed=embed, mention_author=False)
+    await ctx.channel.purge(limit=1)
+    await ctx.send(embed=embed, mention_author=False)
 
 
 #rev() is for reversing a sentence. Ex: $rev <arg>
@@ -692,96 +711,54 @@ async def on_ready():
     #CONNECTED MESSAGE#
     clock = datetime.now(
         pytz.timezone('US/Eastern')).strftime("%m/%d/%y  %H:%M:%S")
-    await channel.send(embed=discord.Embed(title='Homelands Bot is Online',
-                                           description=f"Logged on as {bot.user} as of {clock}",
-                                           color=discord.Color.green()))
+     
+    await channel.send(embed=discord.Embed(
+        title='Homelands Bot is Online',
+        description=f"Logged on as {bot.user} as of {clock}",
+        color=discord.Color.green()))
+    
     print('Logged on')
+    global idling_time
+    idling_time = 0
     background_task.start()
+    scheduling.start()
+    global nested
+    await asyncio.create_task(b_status())
 
 
 
 
+@tasks.loop(seconds=5)
+async def scheduling():
+    global idling_time
     
-@tasks.loop(seconds=60) 
-async def background_task():
-
-    #Bot status
-    from startup import bot_status
-    bot_status = bot_status()
-    if bot_status == 'restart':
-        sys.exit()
-
-    
-    #Variables
-    from bot_func import cng_due
-    from googleapi import main,main2
-    from scheduler import scheduler
-    from subjects import dict705, dict805, dict605, sub
-    day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
-    weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
-    channel = bot.get_channel(919281999427043369)
-    periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-    holidays = ['03:15','03:16','03:17','03:18','03:19','03:20']
-    now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
-    hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
-    x = datetime.now(pytz.timezone('US/Eastern')).weekday()
-    day = int(db['day'])
-
-    
-    try:
-        os.remove(r'assets/temp/temp.png')
-    except:
-        pass
-    
-    def refresh():
-        print("Updated duedates")
-        #Try and except for tempoarary service errors for Google API
-        repeat = 0
-        while True:
-            if repeat > 2:
-                break
-            try:
-                #Refresh duedates
-                dueembed = cng_due(main2(), main())
-                return dueembed
-            except:
-                repeat += 1
-                pass
-    
-    
-
-    #Update the weather and duedate embed every 4 and 1 minute(s)
-    cnl = bot.get_channel(887095059680477214)
-    message = await cnl.fetch_message(914295454840258601)
-    try:
-        await message.edit(embed=refresh())
-    except:
-        pass
-    if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
-        from bot_func import weatherembed
-        channel = bot.get_channel(922230146038132816)
-        message = await channel.fetch_message(922231492296445994)
-        try:
-            await message.edit(embed=weatherembed())
-        except:
-            pass
-    
-
-    #Scheduling for school
+    if idling_time != 0:
+        idling_time -= 5
+    else:
         
-    #Non-school days
-    if datetime.now(
-            pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays or day_of_the_week[x] not in weekdays:
-        print("Holiday. Refresh in a minute")
-        pass
-
-    #School days
-                
-    #School hours
-    elif hr >=6 and hr <= 14:
-        while hr != 15:
+        #Scheduling for school
+        from scheduler import scheduler
+        from subjects import dict705, dict805, dict605, sub
+        day_of_the_week = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday','Sunday']
+        weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
+        channel = bot.get_channel(919281999427043369)
+        periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
+        holidays = ['03:15','03:16','03:17','03:18','03:19','03:20']
+        now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
+        hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
+        x = datetime.now(pytz.timezone('US/Eastern')).weekday()
+        day = int(db['day'])
+        
+        #Non-school days
+        if datetime.now(
+                pytz.timezone('US/Eastern')).strftime("%m:%d") in holidays or day_of_the_week[x] not in weekdays:
+            print("Holiday. Refresh in a minute.")
+            idling_time = 60
     
-            #Scheduler Channel
+        #School days
+                    
+        #School hours
+        elif hr >=6 and hr <= 14:
             channel = bot.get_channel(895778100854546493)
     
             #Start of the day ( 8:30 )
@@ -800,7 +777,7 @@ async def background_task():
                 print("Sent period 1")
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
-                await asyncio.sleep(120)
+                idling_time = 600
     
             #Lunchtime
             elif now_time == '11:00':
@@ -815,8 +792,8 @@ async def background_task():
                 print("Sent lunch")
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
-                await asyncio.sleep(1800)  #Half an hour
-    
+                idling_time = 600
+                
             #End of the day ( 2:30 )
             elif now_time == '14:30':
                 file = scheduler()
@@ -858,9 +835,7 @@ async def background_task():
                 print("Sent the schdule for the next day")
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
-                await asyncio.sleep(3800)
-    
-                #Announce the person who is infected
+                idling_time = 9000
     
     
             #School periods
@@ -880,16 +855,62 @@ async def background_task():
                 print(f"Sent school period {index}")
                 msg = await channel.send(file=file, embed=embed)
                 await msg.publish()
-            
-            #Non-event periods
-            else:
-                print("Not a vaild period")
-                await asyncio.sleep(5)
-        
-    #Off school hours
-    else:
-        print("School day but off school hours")
+                idling_time = 1500
+
+
+@tasks.loop(seconds=60) 
+async def background_task():
+    
+    from startup import timeupdate
+    if timeupdate() == 'restart':
+        sys.exit()
+    global x
+    print(f"Bot status : {x[0]['status']}\n")
+
+    
+    #Variables
+    from bot_func import cng_due
+    from googleapi import main,main2
+    from bot_func import weatherembed
+
+    
+    try:
+        os.remove(r'assets/temp/temp.png')
+    except:
         pass
+    
+    def refresh():
+        print("Updated duedates")
+        #Try and except for tempoarary service errors for Google API
+        repeat = 0
+        while True:
+            if repeat > 2:
+                break
+            try:
+                #Refresh duedates
+                dueembed = cng_due(main2(), main())
+                return dueembed
+            except:
+                repeat += 1
+                pass
+    
+    
+
+    #Update the weather and duedate embed every 4 and 1 minute(s)
+    cnl = bot.get_channel(887095059680477214)
+    message = await cnl.fetch_message(914295454840258601)
+    try:
+        await message.edit(embed=refresh())
+    except:
+        pass
+    if int(datetime.now(pytz.timezone('US/Eastern')).strftime("%M")) % 4 == 0:
+        
+        channel = bot.get_channel(922230146038132816)
+        message = await channel.fetch_message(922231492296445994)
+        try:
+            await message.edit(embed=weatherembed())
+        except:
+            pass
 
 
 
@@ -900,8 +921,9 @@ if __name__ == "__main__":
     t = Thread(target=run)
     t.daemon = True
     t.start()
-    
-    bot.run(os.environ['discordtoken'],reconnect=True)
+
+            
+    asyncio.get_event_loop().run_until_complete(bot.start(os.environ['discordtoken'],reconnect=True))
     
     sys.exit()
 
