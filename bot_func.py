@@ -98,7 +98,7 @@ def clearConsole():
 
 #Convert second time to real life time
 def findday(second,*args):
-    second = second - 18000 #Change to Toronto timezone
+    second = second - 14400 #Change to Toronto timezone
     try:
         temp = args[0]
         return datetime.fromtimestamp(second).strftime("%H:%M:%S")
