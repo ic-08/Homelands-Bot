@@ -34,7 +34,6 @@ def timeupdate():
 
     try:
         print(f"\n\n\nAlive as of {nowtime}")
-        print(f"Bot status : {str(x[0]['status'])}\n")
     except:
         pass
         

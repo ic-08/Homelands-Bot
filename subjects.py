@@ -4,7 +4,7 @@ dict805 = {
     "1": {
         "1": "Math",
         "2": "Math",
-        "3": "Arts",
+        "3": "Drama",
         "4": "Phys Ed.",
         "5": "Français",
         "6": "Science",
@@ -18,7 +18,7 @@ dict805 = {
         "5": "Language Arts",
         "6": "Music",
         "7": "Geography",
-        "8": "Art"},
+        "8": "Drama"},
     "3": {
         "1": "Math",
         "2": "Math",

@@ -1,5 +1,3 @@
-#FOR ANY ANNOUNCERS, PLEASE ONLY EDIT DUEDATE.PY
-#THANK YOU FOR YOUR COOPERATION AND UNDERSTANDING
 import discord
 from discord.ext import commands, tasks
 import os
@@ -27,26 +25,23 @@ tme = time
 print(f"Repl Database keys in use : {db.keys()}")
 for key in db.keys():
     print(f"{key} : {db[str(key)]}")
-          
-#bot.remove_command('help')
 
+    
 #Bot status check
 async def b_status():
     global x
     while True:
-        try:
-            r = requests.get('https://Pinging-bot.isaacchu1.repl.co/status',timeout=10)
-            x = r.json()
-            if x[0]['status'] != 'ONLINE':
-                print("Bot offline")
-                print("Rebooting") 
-                print(f"Bot status : {x[0]['status']}")
-                await bot.close()
-                sys.exit()
-            else:
-                await asyncio.sleep(5)
-        except:
-            pass
+        if bot.is_closed() == True:
+            print("Bot offline")
+            print("Rebooting") 
+            break
+        else:
+            await asyncio.sleep(5)
+
+    await asyncio.sleep(5)
+    #background_task.stop()
+    #scheduling.stop()
+    #await bot.connect(reconnect = True)
 
 ## BELOW USED FOR BOT ##
 def separate_str(string):
@@ -77,6 +72,7 @@ For example:
 @bot.command()
 async def test(ctx):
     for item in bot.users:
+        break
         if not item.bot:
             print(item.id)
             await ctx.send(item.id)
@@ -143,8 +139,6 @@ async def _7ball(ctx,*args):  #unfortunally, async def 7ball(): returned an erro
     await ctx.send(msg)
     
 #avatar is to show your's, or someone else's avatar. Ex: $avatar, $avatar @mention, $avatar {id}
-
-
 @bot.command(aliases=['av'])
 async def avatar(ctx, *, avamember: discord.Member = None):
     if avamember == None:
@@ -158,8 +152,6 @@ async def avatar(ctx, *, avamember: discord.Member = None):
 
 
 #calc() is for calculator
-
-
 @bot.command()
 async def calc(ctx, *args):
     equation = ''
@@ -171,11 +163,7 @@ async def calc(ctx, *args):
     except:
         pass
 
-
-
-#cmd() is for getting a list of cmds. For now it is a list, aiming to build a list like Dank Memer
-
-
+#time() is for getting a random time. It is a by product of the scheduing function
 @bot.command(aliases=['time'])
 async def clock(ctx):
     file = scheduler()
@@ -188,11 +176,7 @@ async def clock(ctx):
     import os
     os.remove(f'assets/temp/temp.png')
 
-#report() is for reporting users : Ex: $report Someone deleted the report commands
-
-
-
-
+#cmd() is for getting a list of cmds. For now it is a list, aiming to build a list like Dank Memer
 @bot.command(aliases=['command', 'cmds', 'commands', 'com'])
 async def cmd(ctx, *args):
     if str(args) != '()':
@@ -209,12 +193,7 @@ async def cmd(ctx, *args):
         embd = discord.Embed(title="COMMANDS", description=str(cmds))
         await ctx.send(embed=embd)
 
-
-
-
 #credits is to show credits. Ex: $credits
-
-
 @bot.command(aliases=['credit', 'contributors', 'developers', 'dev', 'devs'])
 async def credits(ctx):
     embd = discord.Embed(title="CREDITS", color=discord.Color.teal())
@@ -232,8 +211,6 @@ async def credits(ctx):
 
 
 #help() is for asking for help. Ex: $help
-
-
 @bot.command(aliases=['Help', 'bothelp'])
 async def help(ctx):
     embd = discord.Embed(
@@ -266,8 +243,6 @@ async def help(ctx):
 
 
 #hi() is for saying hello. Ex: $hi, $hello
-
-
 @bot.command(aliases=[
     'hello', 'hi!', 'hello!', 'hi there', 'Hi there', 'Hi there!', 'Howdy!',
     'howdy!', 'Hello', 'Hello!', 'Hi!', 'Hi'
@@ -279,9 +254,7 @@ async def hi(ctx):
 
 
 
-#server() is for server details. Ex: $server
-
-
+#infect() is the infection game and whoever is infect will use this command to infect another individual
 @bot.command()
 async def infect(ctx, *args):
     if db["infected"] == int(ctx.message.author.id):
@@ -312,14 +285,7 @@ async def infect(ctx, *args):
         await ctx.send("You are not infected!")
         await ctx.message.delete()
 
-
-
-
-
-
-
-
-
+#server() is for server information. Similar to the !server command made by carl-bot
 @bot.command()
 async def server(ctx, *args):
     if len(args) == 0:
@@ -452,10 +418,7 @@ async def server(ctx, *args):
             f'<@!235148962103951360> Mod bot\n<@!155149108183695360> Mod Bot\n<@!822488670153474098> $help for more details\n<@!487328045275938828> Fun Bot!\n<@!201503408652419073> Music\n'
         )
 
-
-#server() is for finding the time. Ex: $time, $clock
-
-
+#report() is for reporting users : Ex: $report Someone deleted the report commands
 @bot.command()
 async def report(ctx,*args):
     channel = bot.get_channel(846813361177755648)
@@ -466,21 +429,16 @@ async def report(ctx,*args):
     await ctx.send(f"{ctx.author.mention}, your request has been received. The admins will look over your case.\nKeep in mind : For the best response time, include the perpetrator, reason for report, and message link if valid to make your requests quicker")
 
 #ping() is for people who want to ping the bot
-
-
 @bot.command()
 async def ping(ctx):
     start_time = time.time()
     await ctx.send("** **")
-    embed = discord.Embed(title="Pong!", description = f"Response time : \n\nLatency :{bot.latency * 1000} ms\nDiscord API :{time.time() - start_time * 1000} ms")
+    embed = discord.Embed(title="Pong!", description = f"Response time : \n\nLatency :{bot.latency * 1000} ms\nDiscord API :{(time.time() - start_time) * 1000} ms")
     embed.set_footer(text="Written with python")
     await ctx.channel.purge(limit=1)
     await ctx.send(embed=embed, mention_author=False)
 
-
 #rev() is for reversing a sentence. Ex: $rev <arg>
-
-
 @bot.command()
 async def rev(ctx, *args):
     s = ''
@@ -519,10 +477,6 @@ async def rev(ctx, *args):
 
 
 #poll() is for creating a  poll. Ex: $poll <arg>
-
-
-
-
 @bot.command()
 async def poll(ctx, *args):
     if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
@@ -538,8 +492,6 @@ async def poll(ctx, *args):
 
 
 #uniquepoll() is for creating polls with special emojis. Ex: $poll <arg> 
-
-
 @bot.command()
 async def uniquepoll(ctx, *args):
     if ctx.channel.id == 849714684856238100 or ctx.channel.id == 880096434421125190:
@@ -563,9 +515,7 @@ async def uniquepoll(ctx, *args):
             "Not a valid format. Format is `$uniquepoll {prompt} {emoji1} {emoji2}`"
         )
 
-#Infection game
-
-
+#resmessage() is a message if a person goes to prison and is a guilde/resolution message to help them get out of jail.
 @bot.command()
 async def resmessage(ctx):
     if ctx.channel.id == 923714584462884894 or ctx.channel.id == 923020245512384512:
@@ -576,10 +526,6 @@ async def resmessage(ctx):
         )
         await ctx.channel.send(embed=embed)
 
-
-
-
-
 #MODERATION
 modlist_channels = [
     839141157774426142, 846813361177755648, 887097189443207228,
@@ -587,35 +533,33 @@ modlist_channels = [
 ]
 
 #post() is for posting. Ex: $post <arg>
-@bot.command()
-async def post(ctx,*args):
-
-    message = ''
-    num = 0
-    for item in args:
-        message += str(args[num]) + " "
-        num += 1
-    await ctx.send("Ping role (Type id). Or type something random or 'None' to ping no roles")
+#temp out cuz of abuseeeeee :sob:
+#@bot.command()
+##async def post(ctx,*args):
+ #   message = ''
+ #   num = 0
+ #   for item in args:
+ #       message += str(args[num]) + " "
+ #       num += 1
+ #   await ctx.send("Ping role (Type id). Or type something random or 'None' to ping no roles")
     
-    response = await bot.wait_for('message')
-    await ctx.channel.purge(limit=2)
-    if response.content.lower() == 'none':
-        message = await ctx.send(message)
-    else:
-        try:
-            message = await ctx.send(f"<@&{response.content}> {message}")
-        except:
-            message = await ctx.send(message)
-        
-        # actions which should happen if the person responded with 'no' or something els
+ #   response = await bot.wait_for('message')
+ #   await ctx.channel.purge(limit=2)
+ #   if response.content.lower() == 'none':
+ #       message = await ctx.send(message)
+ #   else:
+ #       try:
+ #           message = await ctx.send(f"<@&{response.content}> {message}")
+ #       except:
+ ##           message = await ctx.send(message)
+  #      
+  #      # actions which should happen if the person responded with 'no' or something els
     #await prompt.message.delete()
     #await response.message.delete()
     
-    await ctx.message.delete()
+  #  await ctx.message.delete()
 
-#its not here
-
-
+#setday() is for changing the day to the day usually tomorrow, for scheduling
 @bot.command(aliases=["changeday"])
 async def setday(ctx, *args):
     if ctx.channel.id in modlist_channels:
@@ -633,19 +577,13 @@ async def setday(ctx, *args):
     else:
         await ctx.send("You can't do that")
 
-
-
-
-
+#addrole() is used to add a role, usually used for the additon of the @imprisoned role
 @bot.command()
 async def addrole(ctx, member: discord.Member, role: discord.Role):
     if ctx.channel.id in modlist_channels:
         await member.add_roles(role)
 
-
-
-
-
+#react() reacts the checkmark button when a profile name change has been done 
 @bot.command()
 async def react(ctx,*args):
     channel = bot.get_channel(907754572179730433)
@@ -653,10 +591,7 @@ async def react(ctx,*args):
     await msg.add_reaction("✅")
     await ctx.message.delete()                                          
 
-
-
-
-
+#reboot() restarts the entire bot
 @bot.command(aliases=['reboot','refresh'])
 async def restart(ctx):
     if ctx.channel.id in modlist_channels:
@@ -667,7 +602,7 @@ async def restart(ctx):
         
 
 
-
+#Start of the bot
 @bot.event
 async def on_ready():
 
@@ -739,7 +674,7 @@ async def scheduling():
         weekdays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']
         channel = bot.get_channel(919281999427043369)
         periods = ['09:00', '09:40', '10:20', '12:00', '12:30', '13:10', '13:50']
-        holidays = ['03:15','03:16','03:17','03:18','03:19','03:20']
+        holidays = ['03:15','03:16','03:17','03:18','03:19','03:20','04:15','04:18']
         now_time = datetime.now(pytz.timezone('US/Eastern')).strftime("%H:%M")
         hr = int(datetime.now(pytz.timezone('US/Eastern')).strftime("%H"))
         x = datetime.now(pytz.timezone('US/Eastern')).weekday()
@@ -873,12 +808,15 @@ async def background_task():
         sys.exit()
     global x
     global time_status
+    
+    if bot.is_closed() != True:
+        print(f"Bot status : Online\n")
+    else:
+        print(f"Bot status : Offline\n")
     try:
-        print(f"Bot status : {x[0]['status']}\n")
         print(time_status)
     except:
         pass
-    
     #Variables
     from bot_func import cng_due
     from googleapi import main,main2

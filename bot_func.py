@@ -61,14 +61,28 @@ def cng_due(due705,due805):
 
 ##### FOR THE GOOGLEAPI ONLY #####
 def alter(dat):
+    dueday = ''
     convmonths = ["January","Feburary","March","April","May","June","July","August","September","October","November","December"]
-    bigmonths = [1,3,5,6,7,9,10,12]
+    bigmonths = [1, 3, 5, 6, 7, 9, 10, 12 ] 
 
-    if dat[1] == 1 and dat[0] not in bigmonths:
-        if dat[0] >= 2:
-            dueday = str(convmonths[dat[0]-2]) +" "+ "31" 
-        else:
-            dueday = str(convmonths[11]) +" "+ "31"
+    try:
+        x = bigmonths.index(int(dat[0]))
+        if dat[1] == 1:
+            if dat[0] >= 2:
+                dueday = str(convmonths[dat[0]-2]) +" "+ "30" 
+            else:
+                dueday = str(convmonths[11]) +" "+ "30"
+    except ValueError:
+        if dat[1] == 1:
+            if dat[0] >= 2:
+                dueday = str(convmonths[dat[0]-2]) +" "+ "31" 
+            else:
+                dueday = str(convmonths[11]) +" "+ "31"
+
+                
+    if dueday != '':
+        return dueday
+
     
     if dat[1] == 1 and dat[0] == 3:
         year = int(datetime.now(pytz.timezone('US/Eastern').strftime("20%y"))) % 4
@@ -76,16 +90,10 @@ def alter(dat):
             dueday = convmonths[dat[0]-2] +" "+ "28"
         else:
             dueday = convmonths[dat[0]-2] +" "+ "29"
-
-    elif dat[1] == 1 and dat[0] in bigmonths:
-        if dat[0] >= 2:
-            dueday = str(convmonths[dat[0]-2]) +" "+ "30" 
-        else:
-            dueday = str(convmonths[11]) +" "+ "30"
-
     
     else:
         dueday = str(convmonths[dat[0]-1]) +" "+ str(dat[1]-1)
+        
     return dueday
 
 
